@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Configure papercraft buildings and scenery, then print exact-scale PDFs to cut, fold and glue."
+    />
+    <title>Gable & Crease</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/controls.css" />
+    <link rel="stylesheet" href="css/designer.css" />
+    <link rel="stylesheet" href="css/editor.css" />
+    <link rel="stylesheet" href="css/catalog.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="top">
+        <div class="brand">
+          <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+            <path
+              d="M4 15 L17 4 L30 15 L30 30 L4 30 Z"
+              fill="var(--knife)"
+              stroke="var(--ink)"
+              stroke-width="1.6"
+              stroke-linejoin="round"
+            />
+            <path d="M17 4 L17 30" stroke="var(--ink)" stroke-width="1.3" stroke-dasharray="3 2 1 2" />
+            <rect x="8" y="19" width="5" height="5" fill="var(--ink)" />
+            <rect x="21" y="19" width="5" height="11" fill="var(--ink)" />
+          </svg>
+          <h1>Gable <span class="amp">&amp;</span> Crease</h1>
+          <span class="tag">PROTOTYPE · BUILD 10</span>
+        </div>
+        <nav class="views" aria-label="Views">
+          <button type="button" data-view="catalog" aria-pressed="true">Catalog</button
+          ><button type="button" data-view="design" aria-pressed="false">Designer</button>
+        </nav>
+        <span class="status" id="status" aria-live="polite"></span>
+        <button class="btn-ghost design-only" id="openDesign" type="button">Open design</button
+        ><input type="file" id="designFile" accept=".json,application/json" hidden />
+        <button class="btn-ghost design-only" id="saveDesign" type="button">Save design</button>
+        <button class="btn-dl design-only" id="dl" type="button">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M8 2v8M4.5 7 8 10.5 11.5 7M3 13.5h10"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Download PDF
+        </button>
+      </header>
+
+      <aside class="panel">
+        <fieldset>
+          <legend>Building</legend>
+          <div class="field">
+            <span>Type</span>
+            <div class="seg grid3" data-set="type">
+              <button type="button" data-v="house">House</button
+              ><button type="button" data-v="store">Storefront</button
+              ><button type="button" data-v="road">Roadside</button
+              ><button type="button" data-v="office">Office / Hotel</button
+              ><button type="button" data-v="venue">Entertain&shy;ment</button
+              ><button type="button" data-v="civic">Civic</button
+              ><button type="button" data-v="industrial">Industrial</button
+              ><button type="button" data-v="barn">Barn</button
+              ><button type="button" data-v="castle">Castle</button
+              ><button type="button" data-v="garden">Backyard</button
+              ><button type="button" data-v="scenery">Scenery</button>
+            </div>
+          </div>
+          <div class="field" id="scCatWrap">
+            <span>Category</span>
+            <div class="seg grid3" data-set="scCat">
+              <button type="button" data-v="ground">Ground</button
+              ><button type="button" data-v="roads">Roads &amp; rail</button
+              ><button type="button" data-v="plants">Plants</button
+              ><button type="button" data-v="structures">Structures</button
+              ><button type="button" data-v="objects">Objects</button
+              ><button type="button" data-v="vehicles">Vehicles</button>
+            </div>
+          </div>
+          <div class="field">
+            <span>Presets</span>
+            <div class="chips" id="presets"></div>
+          </div>
+          <div id="sceneryWrap" style="display: grid; gap: 10px">
+            <div class="row">
+              <label class="field" id="scCountWrap"
+                ><span id="scCountLabel">How many</span
+                ><input id="scCount" data-k="scCount" type="number" min="1" max="12" step="1"
+              /></label>
+              <label class="field" id="scHWrap"
+                ><span>Height</span>
+                <div class="unit">
+                  <input id="scH" data-k="scH" type="number" min="1" max="80" step="0.5" /><em>ft</em>
+                </div></label
+              >
+            </div>
+            <div class="row">
+              <label class="field" id="scLWrap"
+                ><span>Length</span>
+                <div class="unit">
+                  <input id="scL" data-k="scL" type="number" min="4" max="400" step="1" /><em>ft</em>
+                </div></label
+              >
+              <label class="field" id="scWWrap"
+                ><span>Width</span>
+                <div class="unit">
+                  <input id="scW" data-k="scW" type="number" min="2" max="200" step="1" /><em>ft</em>
+                </div></label
+              >
+            </div>
+            <label class="field" id="tileTabsWrap"
+              ><span>Edge tabs for joining tiles</span
+              ><select id="tileTabs" data-k="tileTabs">
+                <option value="two">
+                  Two sides (right + back): any tile glues to the next in every direction
+                </option>
+                <option value="four">All four sides</option>
+                <option value="none">None</option>
+              </select></label
+            >
+            <label class="check" id="pathWrap"
+              ><input type="checkbox" id="path" data-k="path" /> Stepping-stone path</label
+            >
+            <label class="check" id="sidewalkWrap"
+              ><input type="checkbox" id="sidewalks" data-k="sidewalks" /> Sidewalks and curbs</label
+            >
+            <label class="check" id="crosswalkWrap"
+              ><input type="checkbox" id="crosswalk" data-k="crosswalk" /> Crosswalk at one end</label
+            >
+            <p class="hint" id="scHint"></p>
+          </div>
+          <div class="field" id="roadWrap">
+            <span>Business</span>
+            <div class="seg" data-set="roadKind">
+              <button type="button" data-v="diner">Diner</button
+              ><button type="button" data-v="gas">Gas station</button
+              ><button type="button" data-v="carwash">Car wash</button
+              ><button type="button" data-v="motel">Motel</button>
+            </div>
+          </div>
+          <div class="field" id="venueWrap">
+            <span>Venue</span>
+            <div class="seg grid2" data-set="venueKind">
+              <button type="button" data-v="theater">Movie theatre</button
+              ><button type="button" data-v="casino">Casino</button
+              ><button type="button" data-v="bowling">Bowling alley</button
+              ><button type="button" data-v="bar">Modern bar</button
+              ><button type="button" data-v="gym">Fitness gym</button>
+            </div>
+          </div>
+          <div class="field" id="civWrap">
+            <span>Building</span>
+            <div class="seg grid3" data-set="civKind">
+              <button type="button" data-v="fire">Fire station</button
+              ><button type="button" data-v="police">Police</button
+              ><button type="button" data-v="church">Church</button
+              ><button type="button" data-v="library">Library</button
+              ><button type="button" data-v="post">Post office</button
+              ><button type="button" data-v="station">Rail depot</button>
+            </div>
+          </div>
+          <div class="field" id="gardenWrap">
+            <span>Building</span>
+            <div class="seg" data-set="gKind">
+              <button type="button" data-v="greenhouse">Greenhouse</button
+              ><button type="button" data-v="doghouse">Dog house</button
+              ><button type="button" data-v="coop">Chicken coop</button>
+            </div>
+          </div>
+          <div class="field" id="indWrap">
+            <span>Building</span>
+            <div class="seg" data-set="indKind">
+              <button type="button" data-v="factory">Factory</button
+              ><button type="button" data-v="storage">Self storage</button>
+            </div>
+          </div>
+          <div class="field" id="storeStyleWrap">
+            <span>Storefront style</span>
+            <div class="seg" data-set="storeStyle">
+              <button type="button" data-v="classic">Classic</button
+              ><button type="button" data-v="modern">Modern</button>
+            </div>
+          </div>
+          <div class="field" id="officeStyleWrap">
+            <span>Facade</span>
+            <div class="seg" data-set="officeStyle">
+              <button type="button" data-v="glass">Glass</button
+              ><button type="button" data-v="punched">Punched</button
+              ><button type="button" data-v="hotel">Hotel</button>
+            </div>
+          </div>
+          <div class="field" id="towerTopWrap">
+            <span>Corner towers</span>
+            <div class="seg" data-set="towerTop">
+              <button type="button" data-v="cone">Cone roofs</button
+              ><button type="button" data-v="crenel">Battlements</button>
+            </div>
+          </div>
+          <div class="field" id="footWrap">
+            <span>Footprint</span>
+            <div class="seg" data-set="foot">
+              <button type="button" data-v="rect">Rect</button><button type="button" data-v="L">L</button
+              ><button type="button" data-v="T">T</button><button type="button" data-v="U">U</button
+              ><button type="button" data-v="row">Row</button>
+            </div>
+          </div>
+          <div id="bldDims" style="display: grid; gap: 10px">
+            <div class="row">
+              <label class="field"
+                ><span id="wLabel">Width (front)</span>
+                <div class="unit">
+                  <input id="width" data-k="width" type="number" min="8" max="120" step="1" /><em>ft</em>
+                </div></label
+              >
+              <label class="field"
+                ><span>Depth (side)</span>
+                <div class="unit">
+                  <input id="depth" data-k="depth" type="number" min="8" max="80" step="1" /><em>ft</em>
+                </div></label
+              >
+            </div>
+            <div class="row" id="wingWrap">
+              <label class="field"
+                ><span>Wing width</span>
+                <div class="unit">
+                  <input id="wingW" data-k="wingW" type="number" min="6" max="60" step="1" /><em>ft</em>
+                </div></label
+              >
+              <label class="field"
+                ><span>Wing projects</span>
+                <div class="unit">
+                  <input id="wingP" data-k="wingP" type="number" min="4" max="40" step="1" /><em>ft</em>
+                </div></label
+              >
+            </div>
+            <div id="rowWrap" class="field" style="gap: 8px">
+              <span>Units in the row</span>
+              <div class="seg" data-set="units">
+                <button type="button" data-v="2">2</button><button type="button" data-v="3">3</button
+                ><button type="button" data-v="4">4</button>
+              </div>
+              <label class="check"
+                ><input type="checkbox" id="vary" data-k="vary" /> Vary heights, colors and signs</label
+              >
+            </div>
+            <div class="row">
+              <label class="field" id="storiesWrap"
+                ><span id="storiesLabel">Stories</span
+                ><input id="stories" data-k="stories" type="number" min="1" max="12" step="1"
+              /></label>
+              <label class="field"
+                ><span>Story height</span>
+                <div class="unit">
+                  <input id="storyH" data-k="storyH" type="number" min="7" max="24" step="0.5" /><em>ft</em>
+                </div></label
+              >
+            </div>
+            <label class="field"
+              ><span>Foundation</span>
+              <div class="unit">
+                <input id="found" data-k="found" type="number" min="0" max="4" step="0.5" /><em>ft</em>
+              </div></label
+            >
+          </div>
+        </fieldset>
+
+        <fieldset id="roofSet">
+          <legend>Roof</legend>
+          <label class="field" id="roofTypeWrap"
+            ><span>Roof type</span>
+            <select id="roof" data-k="roof">
+              <option value="gable">Gable</option>
+              <option value="hip">Hip</option>
+              <option value="gambrel">Gambrel (barn)</option>
+              <option value="shed">Shed (single slope)</option>
+              <option value="flat">Flat with parapet</option>
+            </select>
+          </label>
+          <div class="field" id="parapetWrap">
+            <span>Parapet / false front</span>
+            <div class="seg" data-set="parapet">
+              <button type="button" data-v="cornice">Cornice</button
+              ><button type="button" data-v="stepped">Stepped</button
+              ><button type="button" data-v="arched">Arched</button>
+            </div>
+          </div>
+          <div id="pitchWrap" style="display: grid; gap: 10px">
+            <div class="row">
+              <label class="field"
+                ><span>Roof pitch</span>
+                <div class="unit">
+                  <input id="pitch" data-k="pitch" type="number" min="2" max="18" step="1" /><em>/12</em>
+                </div></label
+              >
+              <label class="field"
+                ><span>Roof covering</span
+                ><select id="roofFinish" data-k="roofFinish">
+                  <option value="asphalt">3-tab asphalt</option>
+                  <option value="arch">Architectural</option>
+                  <option value="shake">Cedar shake</option>
+                  <option value="slate">Slate</option>
+                  <option value="fish">Fish-scale</option>
+                  <option value="tile">Clay tile</option>
+                  <option value="seam">Standing-seam metal</option>
+                  <option value="corr">Corrugated metal</option>
+                </select></label
+              >
+            </div>
+            <div class="row">
+              <label class="field"
+                ><span>Eave overhang</span>
+                <div class="unit">
+                  <input id="eave" data-k="eave" type="number" min="0" max="3" step="0.25" /><em>ft</em>
+                </div></label
+              >
+              <label class="field"
+                ><span>Rake overhang</span>
+                <div class="unit">
+                  <input id="rake" data-k="rake" type="number" min="0" max="3" step="0.25" /><em>ft</em>
+                </div></label
+              >
+            </div>
+          </div>
+          <p class="hint" id="roofHint"></p>
+        </fieldset>
+
+        <fieldset>
+          <legend id="detailsLegend">Details</legend>
+          <label class="field" id="signWrap"
+            ><span>Sign text</span
+            ><input type="text" id="sign" data-k="sign" maxlength="18" spellcheck="false"
+          /></label>
+          <label class="check" id="awningWrap"
+            ><input type="checkbox" id="awning" data-k="awning" />
+            <span id="awningLabel">Striped awning (3D part)</span></label
+          >
+          <div class="field" id="baysWrap">
+            <span>Service bays</span>
+            <div class="seg" data-set="bays">
+              <button type="button" data-v="1">1</button><button type="button" data-v="2">2</button
+              ><button type="button" data-v="3">3</button>
+            </div>
+          </div>
+          <label class="check" id="canopyWrap"
+            ><input type="checkbox" id="canopy" data-k="canopy" /> Pump canopy, posts and pumps</label
+          >
+          <label class="check" id="shuttersWrap"
+            ><input type="checkbox" id="shutters" data-k="shutters" /> Shutters on windows</label
+          >
+          <label class="check" id="chimneyWrap"
+            ><input type="checkbox" id="chimney" data-k="chimney" /> Chimneys on the ridge</label
+          >
+          <label class="check" id="towerWrap"
+            ><input type="checkbox" id="tower" data-k="tower" /> Corner tower with cone roof</label
+          >
+          <label class="check" id="boardedWrap"
+            ><input type="checkbox" id="boarded" data-k="boarded" /> Boarded-up windows</label
+          >
+          <label class="check" id="litWrap"
+            ><input type="checkbox" id="lit" data-k="lit" /> Lit windows (glowing)</label
+          >
+          <label class="check" id="brokenWrap"
+            ><input type="checkbox" id="broken" data-k="broken" /> Broken windows (cracked glass)</label
+          >
+          <div class="field" id="porchWrap">
+            <span>Porch</span>
+            <div class="seg" data-set="porch">
+              <button type="button" data-v="none">None</button
+              ><button type="button" data-v="full">Full</button
+              ><button type="button" data-v="center">Entry</button
+              ><button type="button" data-v="portico">Portico</button>
+            </div>
+          </div>
+          <div class="field" id="deckWrap">
+            <span>Deck</span>
+            <div class="seg" data-set="deck">
+              <button type="button" data-v="none">None</button
+              ><button type="button" data-v="rear">Rear deck</button>
+            </div>
+          </div>
+          <div class="row" id="deckSizeWrap">
+            <label class="field"
+              ><span>Deck width</span>
+              <div class="unit">
+                <input id="deckW" data-k="deckW" type="number" min="6" max="60" step="1" /><em>ft</em>
+              </div></label
+            ><label class="field"
+              ><span>Deck depth</span>
+              <div class="unit">
+                <input id="deckD" data-k="deckD" type="number" min="4" max="24" step="1" /><em>ft</em>
+              </div></label
+            >
+          </div>
+          <div class="field" id="balcWrap">
+            <span>Balcony (2nd floor)</span>
+            <div class="seg" data-set="balcony">
+              <button type="button" data-v="none">None</button
+              ><button type="button" data-v="front">Front</button
+              ><button type="button" data-v="rear">Rear</button>
+            </div>
+          </div>
+          <label class="field" id="balcSizeWrap"
+            ><span>Balcony width</span>
+            <div class="unit">
+              <input id="balcW" data-k="balcW" type="number" min="5" max="40" step="1" /><em>ft</em>
+            </div></label
+          >
+          <p class="hint" id="addonHint">
+            Decks and balconies print on their own sheets after the building, with a door added to the wall
+            behind them.
+          </p>
+          <div class="field" id="winStyleWrap">
+            <span>Window shape</span>
+            <div class="seg" data-set="winStyle">
+              <button type="button" data-v="rect">Square</button
+              ><button type="button" data-v="arched">Arched</button
+              ><button type="button" data-v="gothic">Gothic</button>
+            </div>
+          </div>
+          <label class="check" id="dormersWrap"
+            ><input type="checkbox" id="dormers" data-k="dormers" /> Dormers on the front roof</label
+          >
+          <label class="check" id="garageWrap"
+            ><input type="checkbox" id="garage" data-k="garage" /> Garage door on the wing</label
+          >
+          <label class="check" id="gableFishWrap"
+            ><input type="checkbox" id="gableFish" data-k="gableFish" /> Fish-scale shingles in the
+            gables</label
+          >
+          <label class="check" id="siloWrap"
+            ><input type="checkbox" id="silo" data-k="silo" /> Silo beside the barn</label
+          >
+          <p class="hint" id="detailsHint">
+            Windows and doors are placed automatically. Use the window &amp; door editor under the 3D view to
+            change any wall or any single opening.
+          </p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Finish</legend>
+          <label class="field" id="wallFinishWrap"
+            ><span>Walls</span
+            ><select id="wallFinish" data-k="wallFinish">
+              <option value="siding">Lap siding</option>
+              <option value="brick">Brick</option>
+              <option value="batten">Board &amp; batten</option>
+              <option value="stucco">Stucco</option>
+              <option value="block">Concrete block</option>
+              <option value="stone">Fieldstone</option>
+              <option value="panel">Metal panel</option>
+              <option value="log">Logs</option>
+              <option value="shingle">Cedar shingle</option>
+              <option value="tudor">Tudor half-timber</option>
+            </select></label
+          >
+          <div class="swatches">
+            <label class="sw"
+              ><input type="color" id="wallColor" data-k="wallColor" /><span id="swWall">Walls</span></label
+            >
+            <label class="sw"
+              ><input type="color" id="trimColor" data-k="trimColor" /><span id="swTrim">Trim</span></label
+            >
+            <label class="sw"
+              ><input type="color" id="roofColor" data-k="roofColor" /><span id="swRoof">Roof</span></label
+            >
+            <label class="sw" id="swWinWrap"
+              ><input type="color" id="windowColor" data-k="windowColor" />Windows</label
+            >
+            <label class="sw" id="swDoorWrap"
+              ><input type="color" id="doorColor" data-k="doorColor" />Doors</label
+            >
+            <label class="sw" id="shutterSw"
+              ><input type="color" id="shutterColor" data-k="shutterColor" />Shutters</label
+            >
+            <label class="sw"><input type="color" id="accentColor" data-k="accentColor" />Accent</label>
+          </div>
+          <p class="hint">Accent colors signs, awnings, stripes and the canopy.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Print</legend>
+          <label class="field"
+            ><span>Scale</span>
+            <select id="scale" data-k="scale">
+              <optgroup label="Model railroad">
+                <option value="87">1:87 · HO</option>
+                <option value="64">1:64 · S</option>
+                <option value="48">1:48 · O</option>
+              </optgroup>
+              <optgroup label="Scale models">
+                <option value="72">1:72</option>
+                <option value="35">1:35</option>
+              </optgroup>
+              <optgroup label="Tabletop gaming">
+                <option value="100">15 mm (≈1:100)</option>
+                <option value="56">28 mm (≈1:56)</option>
+                <option value="50">32 mm (≈1:50)</option>
+              </optgroup>
+              <optgroup label="Other">
+                <option value="custom">Custom ratio…</option>
+                <option value="fit">Fit to paper</option>
+              </optgroup>
+            </select>
+          </label>
+          <label class="field" id="customWrap"
+            ><span>Custom ratio</span>
+            <div style="display: flex; align-items: center; gap: 6px">
+              <span style="font: 500 13px var(--mono)">1:</span
+              ><input id="customDen" data-k="customDen" type="number" min="5" max="1000" step="1" /></div
+          ></label>
+          <div class="row">
+            <label class="field"
+              ><span>Paper</span
+              ><select id="paper" data-k="paper">
+                <option value="letter">Letter 8.5×11 in</option>
+                <option value="legal">Legal 8.5×14 in</option>
+                <option value="a4">A4 210×297 mm</option>
+                <option value="a3">A3 297×420 mm</option>
+              </select></label
+            >
+            <label class="field"
+              ><span>Paper stock</span
+              ><select id="thick" data-k="thick">
+                <option value="copy">Copy paper 0.10 mm</option>
+                <option value="card65">65 lb card 0.23 mm</option>
+                <option value="card110">110 lb card 0.30 mm</option>
+              </select></label
+            >
+          </div>
+          <div class="field">
+            <span>Orientation</span>
+            <div class="seg" data-set="orient">
+              <button type="button" data-v="auto">Auto</button
+              ><button type="button" data-v="portrait">Portrait</button
+              ><button type="button" data-v="landscape">Landscape</button>
+            </div>
+          </div>
+          <div class="field">
+            <span>Print style</span>
+            <div class="seg" data-set="mode">
+              <button type="button" data-v="color">Full color</button
+              ><button type="button" data-v="line">Line art</button>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox" id="base" data-k="base" /> Include base plates</label>
+          <p class="hint">
+            Paper stock sets the thickness offset: base plates shrink so the walls wrap around them cleanly.
+          </p>
+        </fieldset>
+      </aside>
+
+      <main class="stage">
+        <div class="card3d">
+          <div id="view3d" aria-label="3D preview of the assembled building"></div>
+          <span class="title">Assembled model</span>
+          <span class="cap" id="cap3d">Drag to rotate · scroll to zoom</span>
+        </div>
+        <section class="editor" id="editor">
+          <div class="ed-head">
+            <h2>Window &amp; door editor</h2>
+            <label class="ed-wall"
+              ><span class="sr">Wall</span
+              ><select id="edWall"></select
+            ></label>
+          </div>
+          <div class="ed-tools">
+            <button type="button" data-add="win">+ Window</button
+            ><button type="button" data-add="round">+ Round window</button
+            ><button type="button" data-add="door">+ Door</button
+            ><button type="button" data-add="double">+ Double door</button
+            ><button type="button" data-add="sliding">+ Sliding door</button
+            ><button type="button" data-add="garage">+ Garage</button> <span class="ed-sp"></span
+            ><button type="button" id="edDel">Delete</button
+            ><button type="button" id="edClear">Clear wall</button
+            ><button type="button" id="edReset">Reset to automatic</button>
+          </div>
+          <div class="ed-body">
+            <div class="ed-canvas">
+              <svg id="edSvg" role="img" aria-label="Wall elevation with draggable windows and doors"></svg>
+            </div>
+            <div class="ed-side">
+              <p class="ed-none" id="edNone">
+                Click a window or door to select it, then drag to move. It snaps to a 3 in grid, the wall
+                center, and the edges of other openings.
+              </p>
+              <div id="edProps" class="ed-props" hidden>
+                <label class="field"
+                  ><span>Type</span
+                  ><select id="edType">
+                    <option value="win">Window</option>
+                    <option value="door">Door</option>
+                    <option value="double">Double door</option>
+                    <option value="sliding">Sliding glass door</option>
+                    <option value="garage">Garage door</option>
+                  </select></label
+                >
+                <div class="row" id="edWinRow">
+                  <label class="field"
+                    ><span>Shape</span
+                    ><select id="edStyle">
+                      <option value="rect">Square top</option>
+                      <option value="segment">Segmental arch</option>
+                      <option value="arched">Round arch</option>
+                      <option value="gothic">Gothic</option>
+                      <option value="half">Half-round</option>
+                      <option value="round">Round</option>
+                      <option value="oval">Oval</option>
+                      <option value="octagon">Octagon</option>
+                      <option value="diamond">Diamond</option>
+                      <option value="triangle">Triangle</option>
+                    </select></label
+                  >
+                  <label class="field"
+                    ><span>Panes</span
+                    ><select id="edPanes">
+                      <option value="cross">Four lites</option>
+                      <option value="none">Picture (single pane)</option>
+                      <option value="dh">One over one</option>
+                      <option value="grid">Colonial grid</option>
+                      <option value="prairie">Prairie</option>
+                      <option value="leaded">Leaded diamonds</option>
+                      <option value="radial">Sunburst</option>
+                    </select></label
+                  >
+                </div>
+                <label class="field" id="edShutWrap"
+                  ><span>Shutters</span
+                  ><select id="edShut">
+                    <option value="auto">Match building setting</option>
+                    <option value="on">Shutters</option>
+                    <option value="off">No shutters</option>
+                  </select></label
+                >
+                <label class="field" id="edDoorWrap"
+                  ><span>Style</span
+                  ><select id="edDoorSt"></select
+                ></label>
+                <div class="row" id="edGarRow">
+                  <label class="field"
+                    ><span>Garage style</span
+                    ><select id="edGStyle">
+                      <option value="panel">Raised panel</option>
+                      <option value="flush">Flush modern</option>
+                      <option value="carriage">Carriage house</option>
+                      <option value="rollup">Roll-up</option>
+                      <option value="glass">Full glass</option>
+                    </select></label
+                  >
+                  <label class="check" id="edGWinWrap"
+                    ><input type="checkbox" id="edGWin" /> Row of windows</label
+                  >
+                </div>
+                <div class="ed-fx" id="edFx">
+                  <span class="ed-fx-h">Effects</span>
+                  <label class="check"><input type="checkbox" id="edLit" /> Light on</label
+                  ><label class="check"><input type="checkbox" id="edBoard" /> Boarded up</label
+                  ><label class="check"><input type="checkbox" id="edBroken" /> Broken glass</label>
+                  <button type="button" id="edFxAuto" class="ed-link">Follow building setting</button>
+                </div>
+                <div class="row">
+                  <label class="field"
+                    ><span>From left</span>
+                    <div class="unit"><input id="edX" type="number" step="0.25" /><em>ft</em></div></label
+                  ><label class="field"
+                    ><span>Bottom</span>
+                    <div class="unit"><input id="edY" type="number" step="0.25" /><em>ft</em></div></label
+                  >
+                </div>
+                <div class="row">
+                  <label class="field"
+                    ><span>Width</span>
+                    <div class="unit"><input id="edW" type="number" step="0.25" /><em>ft</em></div></label
+                  ><label class="field"
+                    ><span>Height</span>
+                    <div class="unit"><input id="edH" type="number" step="0.25" /><em>ft</em></div></label
+                  >
+                </div>
+              </div>
+              <p class="ed-readout" id="edReadout"></p>
+              <p class="hint" id="edInfo"></p>
+            </div>
+          </div>
+        </section>
+        <div class="summary" id="summary"></div>
+        <div class="warns" id="warns"></div>
+        <div class="sheets-h">
+          <h2>Print sheets</h2>
+          <p>Print at Actual size (100%), then check the 2 in / 50 mm bars on sheet 1.</p>
+          <label class="zoom"
+            >Preview size <input type="range" id="zoom" min="260" max="760" step="20" value="380"
+          /></label>
+        </div>
+        <div class="sheets" id="sheets"></div>
+      </main>
+      <section class="catalog" id="catView" aria-labelledby="catTitle">
+        <div class="cat-head">
+          <div>
+            <h2 id="catTitle">Catalog</h2>
+            <p>
+              Every model prints to exact scale on your own paper, with fold lines, glue tabs and a scale bar
+              on each sheet. Pick one to change its size, colors, windows and doors, or download it as it is.
+            </p>
+          </div>
+          <label class="cat-search"
+            ><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true">
+              <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6" />
+              <path d="m11 11 3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg
+            ><input
+              id="catQ"
+              type="search"
+              placeholder="Search diner, barn, haunted…"
+              aria-label="Search the catalog"
+          /></label>
+        </div>
+        <div class="cat-chips" id="catChips" role="group" aria-label="Categories"></div>
+        <div class="cat-grid" id="catGrid"></div>
+        <p class="cat-empty" id="catEmpty" hidden>
+          Nothing matches that search. Try a building type like “station” or “cabin”.
+        </p>
+      </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

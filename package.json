@@ -1,0 +1,22 @@
+{
+  "name": "gable-crease",
+  "version": "0.10.0",
+  "private": true,
+  "description": "Configure papercraft buildings and scenery, then print exact-scale PDFs to cut, fold and glue.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node scripts/serve.js . 5173",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.js dist 5174",
+    "format": "prettier --write \"src/**/*.js\" \"css/*.css\" index.html",
+    "test": "node tests/presets.js && node tests/pdf.js",
+    "test:dist": "npm run build && TARGET=dist npm test"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "pdf-lib": "1.17.1",
+    "playwright": "^1.47.0",
+    "prettier": "^3.3.0",
+    "three": "0.128.0"
+  }
+}
