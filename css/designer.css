@@ -1,0 +1,152 @@
+/* Designer stage: cutting-mat background, 3D preview, summary, warnings and sheet previews. */
+main.stage {
+  background-color: var(--mat);
+  background-image:
+    linear-gradient(var(--mat-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mat-major) 1px, transparent 1px),
+    linear-gradient(var(--mat-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mat-minor) 1px, transparent 1px);
+  background-size:
+    100px 100px,
+    100px 100px,
+    20px 20px,
+    20px 20px;
+  padding-block: 20px 40px;
+  padding-inline: 24px;
+  display: grid;
+  gap: 22px;
+  align-content: start;
+  min-width: 0;
+}
+.card3d {
+  background: linear-gradient(var(--sky-top), var(--sky-bot));
+  border-radius: 6px;
+  position: relative;
+  height: clamp(260px, 44vh, 470px);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+#view3d {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+}
+#view3d:active {
+  cursor: grabbing;
+}
+.card3d .cap {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  font: 12px var(--mono);
+  color: var(--muted);
+  pointer-events: none;
+}
+.card3d .title {
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  font: 700 12px var(--display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.75;
+}
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--mat-major);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.summary div {
+  background: rgba(0, 0, 0, 0.18);
+  padding: 10px 14px;
+  display: grid;
+  gap: 2px;
+}
+.summary b {
+  font: 700 11px var(--display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mat-ink);
+  opacity: 0.8;
+}
+.summary span {
+  font: 500 14px var(--mono);
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.summary small {
+  font: 12px var(--mono);
+  color: var(--mat-ink);
+}
+.warns {
+  display: grid;
+  gap: 8px;
+}
+.warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-radius: 4px;
+  padding: 9px 12px;
+  font-size: 13px;
+}
+.sheets-h {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: #fff;
+  flex-wrap: wrap;
+}
+.sheets-h h2 {
+  font: 700 15px var(--display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.sheets-h p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mat-ink);
+}
+.sheets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  align-items: flex-start;
+}
+.sheet {
+  display: grid;
+  gap: 6px;
+  width: min(100%, var(--sheet-w, 380px));
+}
+.sheet svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.sheet figcaption {
+  font: 12px var(--mono);
+  color: var(--mat-ink);
+}
+.zoom {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--mat-ink);
+}
+.zoom input {
+  accent-color: var(--knife);
+}
+@media (max-width: 860px) {
+  main.stage {
+    padding-inline: 16px;
+  }
+}

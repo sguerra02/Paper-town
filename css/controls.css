@@ -1,0 +1,206 @@
+/* Settings panel controls: fields, segmented buttons, chips, swatches and checkboxes. */
+aside.panel {
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  padding-block: 8px 28px;
+  padding-inline: 20px;
+  overflow: auto;
+}
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 16px 0 4px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+}
+fieldset:last-of-type {
+  border-bottom: 0;
+}
+legend {
+  font: 700 12px/1 var(--display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0;
+  margin-bottom: 4px;
+  float: left;
+  width: 100%;
+}
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.field {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.field > span,
+.lbl {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.unit {
+  position: relative;
+}
+.unit input {
+  padding-right: 30px;
+}
+.unit em {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font: 12px var(--mono);
+  font-style: normal;
+  color: var(--muted);
+  pointer-events: none;
+}
+input[type='number'],
+select {
+  width: 100%;
+  font: 500 13px var(--mono);
+  color: var(--ink);
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 7px 8px;
+  min-width: 0;
+}
+select {
+  font-family: var(--body);
+}
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.seg {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--field);
+}
+.seg button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 500 13px var(--body);
+  padding: 7px 4px;
+  cursor: pointer;
+  border-right: 1px solid var(--line);
+}
+.seg button:last-child {
+  border-right: 0;
+}
+.seg button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--panel);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  border: 1px solid var(--line);
+  background: var(--field);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 5px 11px;
+  font: 500 12px var(--body);
+  cursor: pointer;
+}
+.chip:hover {
+  border-color: var(--accent);
+}
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.sw {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+.sw input {
+  width: 100%;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px;
+  background: var(--field);
+  cursor: pointer;
+}
+.check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+.check input {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+}
+.hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+.seg.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.seg.grid3 button:nth-child(-n + 9) {
+  border-bottom: 1px solid var(--line);
+}
+.seg.grid3 button:nth-child(3n) {
+  border-right: 0;
+}
+.seg.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.seg.grid2 button:nth-child(-n + 2) {
+  border-bottom: 1px solid var(--line);
+}
+.seg.grid2 button:nth-child(2n) {
+  border-right: 0;
+}
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--panel);
+  border-color: var(--accent);
+}
+.seg button:disabled {
+  color: var(--muted);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+input[type='text'] {
+  width: 100%;
+  font: 600 13px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 7px 8px;
+}
+@media (max-width: 860px) {
+  aside.panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}

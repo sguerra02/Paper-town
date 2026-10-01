@@ -1,0 +1,213 @@
+/* Catalog view. */
+.catalog {
+  grid-column: 1/-1;
+  padding-block: 28px 56px;
+  padding-inline: clamp(16px, 4vw, 48px);
+  display: grid;
+  gap: 22px;
+  align-content: start;
+  min-width: 0;
+}
+.cat-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.cat-head h2 {
+  font: 700 clamp(24px, 3.2vw, 34px)/1.05 var(--display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+  text-wrap: balance;
+}
+.cat-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  max-width: 62ch;
+}
+.cat-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0 10px;
+  width: min(100%, 320px);
+}
+.cat-search input {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 14px var(--body);
+  padding: 10px 0;
+  width: 100%;
+  outline: none;
+}
+.cat-search:focus-within {
+  border-color: var(--accent);
+}
+.cat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cat-chips button {
+  border: 1px solid var(--line);
+  background: var(--field);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font: 500 12.5px var(--body);
+  cursor: pointer;
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+}
+.cat-chips button small {
+  font: 11px var(--mono);
+  color: var(--muted);
+}
+.cat-chips button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--panel);
+}
+.cat-chips button[aria-pressed='true'] small {
+  color: inherit;
+  opacity: 0.8;
+}
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 232px), 1fr));
+  gap: 18px;
+}
+.cat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.cat-thumb {
+  position: relative;
+  aspect-ratio: 4/3;
+  max-width: 100%;
+  background-color: var(--mat);
+  background-image:
+    linear-gradient(var(--mat-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mat-major) 1px, transparent 1px),
+    linear-gradient(var(--mat-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mat-minor) 1px, transparent 1px);
+  background-size:
+    60px 60px,
+    60px 60px,
+    12px 12px,
+    12px 12px;
+  border: 0;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  display: block;
+}
+.cat-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.cat-thumb .ph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 12px var(--mono);
+  color: var(--mat-ink);
+  opacity: 0.8;
+}
+.cat-thumb .scale {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  font: 11px var(--mono);
+  color: #fff;
+  letter-spacing: 0.02em;
+  background: rgba(10, 24, 19, 0.62);
+  border-radius: 3px;
+  padding: 3px 6px;
+}
+.cat-thumb .scale:empty {
+  display: none;
+}
+.cat-body {
+  padding: 12px 14px 14px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.cat-body h3 {
+  margin: 0;
+  font: 600 15px/1.25 var(--body);
+}
+.cat-meta {
+  font: 12px var(--mono);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.cat-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 20px;
+}
+.cat-tags span {
+  font: 500 11px var(--body);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+.cat-act {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+.cat-act button {
+  flex: 1;
+  font: 600 12.5px var(--body);
+  border-radius: 4px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.cat-act .go {
+  background: var(--knife);
+  color: var(--knife-ink);
+  border: 0;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+}
+.cat-act .pdf {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.cat-empty {
+  color: var(--muted);
+  padding: 30px 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cat-thumb img {
+    animation: catIn 0.35s ease-out;
+  }
+  @keyframes catIn {
+    from {
+      opacity: 0.25;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
