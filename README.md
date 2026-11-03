@@ -3,7 +3,7 @@
 Configure papercraft buildings and scenery in the browser, then print them to exact scale as PDFs to cut, fold and glue.
 
 - **Catalog** of 80+ models: houses, Main Street storefronts, roadside businesses, offices and hotels, entertainment venues, civic buildings, farm buildings, castles, backyard pieces and scenery (ground tiles, roads and rail, trees, vehicles).
-- **Designer** for size, stories, footprint (rectangle, L, T, U, row), roof type and pitch, wall and roof finishes, colors, porches, decks, balconies, dormers, towers and more.
+- **Designer** for size, stories, footprint (rectangle, L, T, U, row, or your own drawn from rectangles), roof type and pitch, wall and roof finishes, colors, porches, decks, balconies, dormers, towers and more.
 - **Window & door editor**: drag openings on any wall; 10 window shapes, 7 pane patterns, 9 door styles, sliding glass doors, 5 garage door styles; per-window lit, boarded and broken effects.
 - **Exact-scale print**: 1:87 (HO), 1:64 (S), 1:48 (O), 1:72, 1:35, tabletop scales, a custom ratio or fit-to-paper, on Letter, Legal, A4 or A3. Oversized parts split into sections with glue strips. Paper thickness offsets, glue tabs, fold lines and a scale bar on every sheet.
 - Free, no accounts, runs entirely in the browser.
@@ -77,6 +77,8 @@ src/
     palette.js             colors → print palette (color or line art)
     building/shell.js      footprint, walls, wings, buildUnit()
     building/roofs.js      gable, hip, gambrel, shed, flat, sawtooth
+    building/wings.js      L, T and U wings on any side of the house
+    building/custom.js     custom footprints: outline walls, per-block roofs, valleys
     features/house.js      porches, dormers, chimneys
     features/towers.js     towers, silos, steeples, civic extras
     features/commercial.js awnings, canopies, marquees, signs
@@ -98,6 +100,7 @@ src/
   ui/
     controls.js            settings panel
     editor.js              window & door editor
+    footprint.js           footprint designer for custom footprints
     preview3d.js           Three.js preview
     catalog.js             catalog view and thumbnails
     design-file.js         save / open design .json
@@ -118,6 +121,7 @@ tests/                     Playwright checks (see Testing)
 | Add a wall or roof finish | `src/art/textures.js` and the finish list in `index.html` |
 | Add a building feature (bay window, cupola…) | a builder in `src/model/features/`, called from `buildUnit()` in `src/model/building/shell.js` |
 | Add a scenery piece | `src/model/scenery/` for the shape, `src/art/scenery/` for the artwork, a preset in `src/config/presets/scenery.js` |
+| Change how custom footprints are built | `src/model/building/custom.js` (model) and `src/ui/footprint.js` (designer) |
 | Change sheet layout or margins | `src/config/constants.js` and `src/print/` |
 | Restyle the site | `css/` (colors and fonts are in `tokens.css`) |
 

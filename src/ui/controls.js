@@ -6,6 +6,7 @@ import { NUM, S, applyPreset } from '../config/state.js';
 import { $ } from '../lib/dom.js';
 import { clamp, cleanSign } from '../lib/math.js';
 import { effFoot, effRoof } from '../model/building/shell.js';
+import { WING_ENDS } from '../model/building/wings.js';
 
 export const NUMSET = { units: 1, bays: 1 };
 
@@ -40,6 +41,18 @@ export const SC_FIELDS = {
 };
 
 export function syncControls() {
+  /* the "which end" buttons depend on the side the wing comes out of */
+  const sideWall = S.wingSide === 'left' || S.wingSide === 'right';
+  const ends = WING_ENDS[S.wingSide] || WING_ENDS.front;
+  if (!ends.includes(S.wingEnd)) S.wingEnd = ends[0];
+  const endSeg = $('#wingEndSeg');
+  if (endSeg.dataset.for !== S.wingSide) {
+    endSeg.dataset.for = S.wingSide;
+    const order = sideWall ? ['front', 'back'] : ['left', 'right'];
+    const label = { left: 'Left end', right: 'Right end', front: 'Front end', back: 'Back end' };
+    endSeg.innerHTML = order.map(v => `<button type="button" data-v="${v}">${label[v]}</button>`).join('');
+    $('#wingEndLbl').textContent = sideWall ? 'Wing sits at' : 'Wing sits at (as seen from the front)';
+  }
   document.querySelectorAll('[data-k]').forEach(el => {
     const k = el.dataset.k;
     if (el.type === 'checkbox') el.checked = !!S[k];
@@ -60,14 +73,20 @@ export function syncControls() {
   $('#storeStyleWrap').hidden = T !== 'store';
   $('#officeStyleWrap').hidden = T !== 'office';
   $('#towerTopWrap').hidden = T !== 'castle';
-  const feet = T === 'house' ? ['rect', 'L', 'T', 'U', 'row'] : ROWABLE[T] ? ['rect', 'row'] : ['rect'];
+  const feet =
+    T === 'house' ? ['rect', 'L', 'T', 'U', 'row', 'custom'] : ROWABLE[T] ? ['rect', 'row'] : ['rect'];
   $('#footWrap').hidden = feet.length === 1;
   document.querySelectorAll('[data-set="foot"] button').forEach(b => {
     b.disabled = !feet.includes(b.dataset.v);
     b.setAttribute('aria-pressed', String(b.dataset.v === f));
   });
   $('#wingWrap').hidden = !wing;
+  $('#wingSideWrap').hidden = !wing;
+  $('#wingEndWrap').hidden = f !== 'L';
   $('#rowWrap').hidden = f !== 'row';
+  const custom = f === 'custom';
+  $('#sizeRow').hidden = custom;
+  $('#customFootHint').hidden = !custom;
   const Lm = STORY_LIM[T];
   $('#storiesWrap').hidden = Lm[1] === 1;
   $('#stories').min = Lm[0];
@@ -123,6 +142,18 @@ export function syncControls() {
   ].forEach(id => ($('#' + id).hidden = T !== 'house'));
   $('#deckSizeWrap').hidden = T !== 'house' || S.deck === 'none';
   $('#balcSizeWrap').hidden = T !== 'house' || S.balcony === 'none';
+  /* not built on custom footprints yet */
+  if (custom)
+    [
+      'dormersWrap',
+      'towerWrap',
+      'garageWrap',
+      'deckWrap',
+      'balcWrap',
+      'deckSizeWrap',
+      'balcSizeWrap',
+      'addonHint'
+    ].forEach(id => ($('#' + id).hidden = true));
   $('#venueWrap').hidden = T !== 'venue';
   $('#civWrap').hidden = T !== 'civic';
   $('#gardenWrap').hidden = T !== 'garden';

@@ -11,6 +11,7 @@ import { pageItems } from './print/sheets.js';
 import { splitPiece } from './print/split.js';
 import { buildPieces, fits } from './print/unfold.js';
 import { refreshEditor } from './ui/editor.js';
+import { refreshFootprint } from './ui/footprint.js';
 import { schedule3D } from './ui/preview3d.js';
 
 export let current = null,
@@ -99,4 +100,5 @@ export function render() {
   $('#warns').innerHTML = c.warns.map(w => `<div class="warn">${esc(w)}</div>`).join('');
   schedule3D();
   refreshEditor();
+  refreshFootprint();
 }
