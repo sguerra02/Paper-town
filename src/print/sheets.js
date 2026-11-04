@@ -49,6 +49,8 @@ export function describe() {
     }[S.venueKind],
     industrial: S.indKind === 'factory' ? 'Factory' : 'Self storage'
   }[S.type];
+  const vp = S.variant && S.type !== 'house' && (PRESETS[S.type] || []).find(q => q.v.variant === S.variant);
+  const tName = vp ? vp.name : t;
   const f = effFoot();
   const fp = {
     rect: 'rectangle',
@@ -75,7 +77,7 @@ export function describe() {
       d = Math.max(...bl.map(b => b.z1)) - Math.min(...bl.map(b => b.z0));
     size = `${Math.round(w)} x ${Math.round(d)} ft overall`;
   }
-  return `${t}  ·  ${fp}  ·  ${size}  ·  ${r}  ·  ${WALL_NAMES[S.wallFinish]}`;
+  return `${tName}  ·  ${fp}  ·  ${size}  ·  ${r}  ·  ${WALL_NAMES[S.wallFinish]}`;
 }
 
 export function pageItems(page, idx, total, sz, den, orientName) {

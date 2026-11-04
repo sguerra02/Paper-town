@@ -93,11 +93,22 @@ export function buildChimney(M, B, label) {
       ],
       { edge: ['attach', 'auto', 'auto', 'auto'], art, name: 'Chimney' }
     ),
-    mkFace(M, [...bottom.slice().reverse().map(([z, y]) => [x0, y, z]), [x0, top, z1], [x0, top, z0]], {
-      edge: sideEdges,
-      art,
-      name: 'Chimney'
-    }),
+    mkFace(
+      M,
+      [
+        ...bottom
+          .slice()
+          .reverse()
+          .map(([z, y]) => [x0, y, z]),
+        [x0, top, z1],
+        [x0, top, z0]
+      ],
+      {
+        edge: sideEdges,
+        art,
+        name: 'Chimney'
+      }
+    ),
     mkFace(
       M,
       [

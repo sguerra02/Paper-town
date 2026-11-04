@@ -152,5 +152,120 @@ export const CIVIC_PRESETS = [
       doorColor: '#5a3a22',
       accentColor: '#2f4a3a'
     }
+  },
+  {
+    name: 'One-room schoolhouse',
+    v: {
+      variant: 'school',
+      foot: 'rect',
+      civKind: 'post',
+      width: 30,
+      depth: 22,
+      stories: 1,
+      storyH: 12,
+      found: 2,
+      pitch: 10,
+      eave: 1,
+      rake: 0.75,
+      sign: 'SCHOOL',
+      wallFinish: 'siding',
+      roofFinish: 'shake',
+      wallColor: '#b3352b',
+      trimColor: '#f4f1ea',
+      roofColor: '#4b4640',
+      windowColor: '#f4f1ea',
+      doorColor: '#f4f1ea',
+      accentColor: '#f4f1ea'
+    }
+  },
+  {
+    name: 'Town hall',
+    v: {
+      variant: 'townhall',
+      foot: 'rect',
+      civKind: 'library',
+      width: 44,
+      depth: 34,
+      stories: 2,
+      storyH: 13,
+      found: 2,
+      pitch: 6,
+      eave: 1,
+      rake: 0.75,
+      sign: 'TOWN HALL',
+      wallFinish: 'brick',
+      roofFinish: 'slate',
+      wallColor: '#8e4535',
+      trimColor: '#efe7d6',
+      roofColor: '#4b5056',
+      windowColor: '#efe7d6',
+      doorColor: '#3a2a22',
+      accentColor: '#3a2a22'
+    }
+  },
+  {
+    name: 'Courthouse',
+    v: {
+      variant: 'courthouse',
+      foot: 'rect',
+      civKind: 'library',
+      width: 50,
+      depth: 40,
+      stories: 2,
+      storyH: 14,
+      found: 3,
+      sign: 'COURTHOUSE',
+      wallFinish: 'stone',
+      roofFinish: 'seam',
+      wallColor: '#d8d2c4',
+      trimColor: '#f2ede0',
+      roofColor: '#6f9a8a',
+      windowColor: '#f2ede0',
+      doorColor: '#3a2a22',
+      accentColor: '#3a2a22'
+    }
+  },
+  {
+    name: 'Small hospital',
+    v: {
+      variant: 'hospital',
+      foot: 'rect',
+      civKind: 'police',
+      width: 48,
+      depth: 36,
+      stories: 3,
+      storyH: 11,
+      found: 1,
+      sign: 'HOSPITAL',
+      wallFinish: 'stucco',
+      wallColor: '#eceae4',
+      trimColor: '#f8f8f6',
+      roofColor: '#6b6f70',
+      windowColor: '#2d4a5a',
+      doorColor: '#2d4a5a',
+      accentColor: '#c8282d'
+    }
+  },
+  {
+    name: 'Water tower',
+    v: {
+      variant: 'watertower',
+      foot: 'rect',
+      civKind: 'police',
+      width: 20,
+      depth: 20,
+      stories: 1,
+      storyH: 12,
+      found: 0,
+      sign: 'MAPLETON',
+      wallFinish: 'panel',
+      roofFinish: 'seam',
+      wallColor: '#c9ced0',
+      trimColor: '#e4e6e8',
+      roofColor: '#c9ced0',
+      windowColor: '#2a3a4a',
+      doorColor: '#2a3a4a',
+      accentColor: '#2a4a7a'
+    }
   }
 ];

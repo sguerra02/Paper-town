@@ -6,6 +6,8 @@ import { buildPorch } from './house.js';
 
 /* polygonal tower / silo: T={cx,cz,r,n,h,top:'cone'|'crenel',coneH,pal,finish,found,style,roofFinish,name,inward:[x,z]} */
 export function buildTower(M, T) {
+  /* y0 lifts the whole tower (a water tank on legs, a drum on a roof); heights below are from y0 */
+  const y0 = T.y0 || 0;
   const ring = [];
   for (let i = 0; i < T.n; i++) {
     const ph = (T.phi0 === undefined ? Math.PI / 2 : T.phi0) - (i * 2 * Math.PI) / T.n;
@@ -21,7 +23,9 @@ export function buildTower(M, T) {
     roof: 'tower',
     stories: T.stories || 1,
     storyH: T.storyH || 10,
-    spooky: T.style === 'spooky'
+    spooky: T.style === 'spooky',
+    sign: T.sign || '',
+    n: T.n
   };
   const walls = [];
   const mh = 3;
@@ -49,7 +53,7 @@ export function buildTower(M, T) {
             tag: ['', '', '', '']
           };
     walls.push(
-      wallFace(M, [a[0], 0, a[1]], u, pr.poly, {
+      wallFace(M, [a[0], y0, a[1]], u, pr.poly, {
         edge: pr.edge,
         tag: pr.tag,
         name: T.name + ' wall',
@@ -81,7 +85,7 @@ export function buildTower(M, T) {
   } else if (T.top === 'crenel') {
     const d = mkFace(
       M,
-      ring.map(p => [p[0], T.h, p[1]]),
+      ring.map(p => [p[0], y0 + T.h, p[1]]),
       { edge: ring.map(() => 'attach'), art: { kind: 'deck', pal: T.pal }, name: T.name + ' deck' }
     );
     M.groups.push({ title: T.name + ' deck', faces: [d] });
@@ -89,13 +93,13 @@ export function buildTower(M, T) {
     const ov = 0.6,
       sc = (T.r + ov) / T.r,
       drop = (ov * T.coneH) / T.r,
-      apex = [T.cx, T.h + T.coneH, T.cz];
+      apex = [T.cx, y0 + T.h + T.coneH, T.cz];
     const tri = [];
     for (let i = 0; i < T.n; i++) {
       const a = ring[i],
         b = ring[(i + 1) % T.n];
-      const A = [T.cx + (a[0] - T.cx) * sc, T.h - drop, T.cz + (a[1] - T.cz) * sc],
-        B = [T.cx + (b[0] - T.cx) * sc, T.h - drop, T.cz + (b[1] - T.cz) * sc];
+      const A = [T.cx + (a[0] - T.cx) * sc, y0 + T.h - drop, T.cz + (a[1] - T.cz) * sc],
+        B = [T.cx + (b[0] - T.cx) * sc, y0 + T.h - drop, T.cz + (b[1] - T.cz) * sc];
       tri.push(
         mkFace(M, [A, B, apex], {
           edge: ['free', 'auto', 'auto'],

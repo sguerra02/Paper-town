@@ -18,6 +18,7 @@ import {
 import { buildChimney, buildDormer, buildPorch } from '../features/house.js';
 import { buildTower, civicExtras } from '../features/towers.js';
 import { colorsFromS, makePal } from '../palette.js';
+import { variantOf } from '../../config/variants.js';
 import { makeWings, placeFaces, planesInFrame, wingFrame, wingOccl, wingRect } from './wings.js';
 
 export function effFoot() {
@@ -29,6 +30,8 @@ export function effFoot() {
 
 export function effRoof() {
   const T = S.type;
+  const vr = variantOf(S.variant).roof;
+  if (vr && T !== 'house') return vr;
   if (T === 'civic') return S.civKind === 'church' ? 'gable' : S.civKind === 'station' ? 'hip' : 'flat';
   if (T === 'garden') return 'gable';
   if (T === 'industrial') return S.indKind === 'factory' ? 'saw' : 'gable';
@@ -51,7 +54,7 @@ export function baseB() {
     stories: st,
     storyH: S.storyH,
     found: S.found,
-    pitch: ind ? (S.indKind === 'storage' ? 1.5 : S.pitch) : S.pitch,
+    pitch: ind ? (S.indKind === 'storage' && !variantOf(S.variant).freePitch ? 1.5 : S.pitch) : S.pitch,
     eave: ind ? 0.6 : S.eave,
     rake: ind ? 0.4 : S.rake,
     venueKind: S.venueKind,
@@ -88,7 +91,8 @@ export function baseB() {
     cz: 0,
     partyL: false,
     partyR: false,
-    tag: ''
+    tag: '',
+    variant: S.type === 'house' || S.type === 'scenery' ? '' : S.variant || ''
   };
 }
 
@@ -636,24 +640,26 @@ export function buildUnit(M, B) {
       [xR + d, zF + d],
       [xR + d, zB - d],
       [xL - d, zB - d]
-    ].forEach(([cx, cz], i) =>
-      buildTower(M, {
-        cx,
-        cz,
-        r,
-        n: 8,
-        h,
-        top: S.towerTop,
-        coneH: r * 2.2,
-        pal: B.pal,
-        finish: B.finish,
-        found: B.found,
-        style: 'castle',
-        roofFinish: 'slate',
-        name: `Tower ${i + 1}`,
-        inward: [B.cx, B.cz]
-      })
-    );
+    ]
+      .slice(0, { front: 2, none: 0 }[variantOf(B.variant).towers] ?? 4)
+      .forEach(([cx, cz], i) =>
+        buildTower(M, {
+          cx,
+          cz,
+          r,
+          n: 8,
+          h,
+          top: S.towerTop,
+          coneH: r * 2.2,
+          pal: B.pal,
+          finish: B.finish,
+          found: B.found,
+          style: 'castle',
+          roofFinish: 'slate',
+          name: `Tower ${i + 1}`,
+          inward: [B.cx, B.cz]
+        })
+      );
   }
   if (B.type === 'barn' && B.silo) {
     const r = 6.5;

@@ -82,5 +82,128 @@ export const OFFICE_PRESETS = [
       accentColor: '#3a4a5a',
       roofColor: '#6b6f70'
     }
+  },
+  {
+    name: 'Brick apartment block',
+    v: {
+      foot: 'rect',
+      officeStyle: 'punched',
+      width: 36,
+      depth: 28,
+      stories: 5,
+      storyH: 10,
+      found: 0.5,
+      sign: 'THE ASHFORD',
+      wallFinish: 'brick',
+      wallColor: '#9a5a3c',
+      trimColor: '#efe7d6',
+      roofColor: '#6b6f70',
+      windowColor: '#2c3236',
+      doorColor: '#2c3236',
+      accentColor: '#2f5a3a'
+    }
+  },
+  {
+    name: 'Art deco tower',
+    v: {
+      variant: 'deco',
+      foot: 'rect',
+      officeStyle: 'punched',
+      width: 36,
+      depth: 32,
+      stories: 10,
+      storyH: 11,
+      found: 0.5,
+      sign: 'NATIONAL',
+      wallFinish: 'stone',
+      wallColor: '#d8cdb6',
+      trimColor: '#e9e2d0',
+      roofColor: '#6b6f70',
+      windowColor: '#2a3a42',
+      doorColor: '#2a3a42',
+      accentColor: '#2a4a5a'
+    }
+  },
+  {
+    name: 'Mid-century office',
+    v: {
+      foot: 'rect',
+      officeStyle: 'glass',
+      width: 44,
+      depth: 30,
+      stories: 3,
+      storyH: 11,
+      found: 0.5,
+      sign: 'ACME',
+      wallFinish: 'panel',
+      wallColor: '#d9d6cf',
+      trimColor: '#f4f4f2',
+      roofColor: '#6b6f70',
+      windowColor: '#3b6a7a',
+      doorColor: '#3b6a7a',
+      accentColor: '#d9a531'
+    }
+  },
+  {
+    name: 'Medical clinic',
+    v: {
+      variant: 'clinic',
+      foot: 'rect',
+      officeStyle: 'punched',
+      width: 34,
+      depth: 28,
+      stories: 2,
+      storyH: 11,
+      found: 0.5,
+      sign: 'CLINIC',
+      wallFinish: 'stucco',
+      wallColor: '#eef0ee',
+      trimColor: '#f8f8f6',
+      roofColor: '#6b6f70',
+      windowColor: '#2d4a5a',
+      doorColor: '#2d4a5a',
+      accentColor: '#2a6aa8'
+    }
+  },
+  {
+    name: 'Small-town inn',
+    v: {
+      foot: 'rect',
+      officeStyle: 'hotel',
+      width: 34,
+      depth: 26,
+      stories: 3,
+      storyH: 9,
+      found: 0.5,
+      sign: 'THE INN',
+      wallFinish: 'siding',
+      wallColor: '#e8dcc4',
+      trimColor: '#4a3a2a',
+      roofColor: '#6b6f70',
+      windowColor: '#2d3a42',
+      doorColor: '#2d3a42',
+      accentColor: '#2f5a3a'
+    }
+  },
+  {
+    name: 'Parking garage',
+    v: {
+      variant: 'parkgarage',
+      foot: 'rect',
+      officeStyle: 'punched',
+      width: 60,
+      depth: 50,
+      stories: 4,
+      storyH: 10,
+      found: 0.5,
+      sign: 'PARKING',
+      wallFinish: 'block',
+      wallColor: '#d3d0c8',
+      trimColor: '#e8e6e0',
+      roofColor: '#6b6f70',
+      windowColor: '#2c3236',
+      doorColor: '#2c3236',
+      accentColor: '#2a4a9a'
+    }
   }
 ];

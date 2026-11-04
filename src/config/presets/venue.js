@@ -100,5 +100,109 @@ export const VENUE_PRESETS = [
       accentColor: '#ff4fa3',
       roofColor: '#6b6f70'
     }
+  },
+  {
+    name: 'Opera house',
+    v: {
+      variant: 'opera',
+      foot: 'rect',
+      venueKind: 'bar',
+      width: 40,
+      depth: 50,
+      stories: 2,
+      storyH: 14,
+      found: 0.5,
+      sign: 'OPERA HOUSE',
+      wallFinish: 'brick',
+      wallColor: '#b0705a',
+      trimColor: '#efe7d6',
+      roofColor: '#6b6f70',
+      windowColor: '#2f3b35',
+      doorColor: '#3a2a22',
+      accentColor: '#5a1f2a'
+    }
+  },
+  {
+    name: 'Arcade',
+    v: {
+      foot: 'rect',
+      venueKind: 'bar',
+      width: 30,
+      depth: 40,
+      stories: 1,
+      storyH: 14,
+      found: 0.25,
+      sign: 'ARCADE',
+      wallFinish: 'stucco',
+      wallColor: '#2a2a4a',
+      trimColor: '#4a4a6a',
+      roofColor: '#6b6f70',
+      windowColor: '#1c1d20',
+      doorColor: '#1c1d20',
+      accentColor: '#3ad0e8'
+    }
+  },
+  {
+    name: 'Roller rink',
+    v: {
+      variant: 'rink',
+      foot: 'rect',
+      venueKind: 'bar',
+      width: 44,
+      depth: 60,
+      stories: 1,
+      storyH: 12,
+      found: 0.5,
+      sign: 'ROLLER RINK',
+      wallFinish: 'panel',
+      roofFinish: 'seam',
+      wallColor: '#e6e1d6',
+      trimColor: '#f4f4f2',
+      roofColor: '#9aa0a4',
+      windowColor: '#2a3a4a',
+      doorColor: '#2a3a4a',
+      accentColor: '#d9542a'
+    }
+  },
+  {
+    name: 'Pool hall',
+    v: {
+      foot: 'rect',
+      venueKind: 'bar',
+      width: 26,
+      depth: 40,
+      stories: 1,
+      storyH: 14,
+      found: 0.25,
+      sign: 'BILLIARDS',
+      wallFinish: 'brick',
+      wallColor: '#5a3a2a',
+      trimColor: '#3a2a22',
+      roofColor: '#6b6f70',
+      windowColor: '#1c1d20',
+      doorColor: '#1c1d20',
+      accentColor: '#3ad07a'
+    }
+  },
+  {
+    name: 'Drive-in movie',
+    v: {
+      variant: 'drivein',
+      foot: 'rect',
+      venueKind: 'bar',
+      width: 18,
+      depth: 14,
+      stories: 1,
+      storyH: 9,
+      found: 0.5,
+      sign: 'SNACK BAR',
+      wallFinish: 'block',
+      wallColor: '#efe9dc',
+      trimColor: '#f4f4f2',
+      roofColor: '#6b6f70',
+      windowColor: '#2a3a4a',
+      doorColor: '#2a3a4a',
+      accentColor: '#c8282d'
+    }
   }
 ];

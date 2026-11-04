@@ -17,6 +17,7 @@ export const S = {
   wingSide: 'front',
   wingEnd: 'right',
   blocks: [],
+  variant: '',
   units: 3,
   vary: true,
   parapet: 'cornice',
@@ -107,7 +108,16 @@ export const NUM = {
 export function applyPreset(v) {
   Object.assign(
     S,
-    { sign: '', boarded: false, lit: false, broken: false, custom: {}, wingSide: 'front', wingEnd: 'right' },
+    {
+      sign: '',
+      boarded: false,
+      lit: false,
+      broken: false,
+      custom: {},
+      wingSide: 'front',
+      wingEnd: 'right',
+      variant: ''
+    },
     v
   );
 }

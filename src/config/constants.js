@@ -37,7 +37,8 @@ export const ROOF_NAMES = {
   gambrel: 'Gambrel',
   shed: 'Shed',
   flat: 'Flat',
-  saw: 'Sawtooth'
+  saw: 'Sawtooth',
+  barrel: 'Barrel'
 };
 
 export const COVER_NAMES = {

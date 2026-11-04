@@ -4,6 +4,7 @@ import { civicArt, gardenArt } from './civic.js';
 import { officeArt, roadArt, storeArt } from './commercial.js';
 import { barnArt, industrialArt } from './rural.js';
 import { venueArt } from './venues.js';
+import { VARIANT_ART } from './variants.js';
 import { drawOpening, houseOpenings } from '../openings/index.js';
 import { tex } from '../scenery/objects.js';
 import { fishSegs, tudorTimbers, wallTexture } from '../textures.js';
@@ -115,6 +116,7 @@ export function wallArt(f) {
     if (ck && !skipO)
       ck.forEach(o => it.push(...drawOpening(o, c, Object.assign({}, B, { winStyle: o.style || 'rect' }))));
   };
+  const n0 = it.length;
   if (B.type === 'house') {
     if (ck) drawCustom();
     else if (!skipO) houseOpenings(f).forEach(o => it.push(...drawOpening(o, c, B)));
@@ -127,6 +129,9 @@ export function wallArt(f) {
   else if (B.type === 'civic') it.push(...civicArt(f, w, P));
   else if (B.type === 'garden') it.push(...gardenArt(f, w, P));
   else it.push(...roadArt(f, w, P));
+  /* catalog variants restyle the facade: they get the type's facade and return what to draw instead */
+  const V = B.type !== 'house' && VARIANT_ART[B.variant];
+  if (V) it.push(...V(f, w, P, it.splice(n0)));
   if (B.type !== 'house') drawCustom();
   return it;
 }
