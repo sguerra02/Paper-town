@@ -2,7 +2,9 @@
 import { SIGNS, STORY_LIM, VARY_ACC, VARY_WALL } from '../config/constants.js';
 import { S } from '../config/state.js';
 import { clamp } from '../lib/math.js';
-import { baseB, buildUnit, effFoot, wingsFor } from './building/shell.js';
+import { baseB, buildUnit, derive, effFoot, wingsFor } from './building/shell.js';
+import { buildCustom } from './building/custom.js';
+import { SPECIALS } from './specials.js';
 import { buildCanopy } from './features/commercial.js';
 import { rotateFaces } from './features/towers.js';
 import { sceneryModel } from './scenery/index.js';
@@ -40,6 +42,13 @@ export function buildModel() {
       }
       buildUnit(M, B);
     }
+  } else if (foot === 'custom') {
+    const B = derive(baseB());
+    buildCustom(M, B);
+  } else if (SPECIALS[S.type !== 'house' && S.type !== 'scenery' ? S.variant : '']) {
+    const B = baseB();
+    B.wings = wingsFor(B);
+    SPECIALS[B.variant](M, B);
   } else {
     const B = baseB();
     B.wings = wingsFor(B);

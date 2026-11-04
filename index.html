@@ -38,7 +38,7 @@
             <rect x="21" y="19" width="5" height="11" fill="var(--ink)" />
           </svg>
           <h1>Gable <span class="amp">&amp;</span> Crease</h1>
-          <span class="tag">PROTOTYPE · BUILD 10</span>
+          <span class="tag">PROTOTYPE · BUILD 14</span>
         </div>
         <nav class="views" aria-label="Views">
           <button type="button" data-view="catalog" aria-pressed="true">Catalog</button
@@ -217,11 +217,16 @@
             <div class="seg" data-set="foot">
               <button type="button" data-v="rect">Rect</button><button type="button" data-v="L">L</button
               ><button type="button" data-v="T">T</button><button type="button" data-v="U">U</button
-              ><button type="button" data-v="row">Row</button>
+              ><button type="button" data-v="row">Row</button
+              ><button type="button" data-v="custom">Custom</button>
             </div>
           </div>
+          <p class="hint" id="customFootHint" hidden>
+            Draw the footprint in the footprint designer under the 3D view. Stories, roof and pitch still come
+            from here.
+          </p>
           <div id="bldDims" style="display: grid; gap: 10px">
-            <div class="row">
+            <div class="row" id="sizeRow">
               <label class="field"
                 ><span id="wLabel">Width (front)</span>
                 <div class="unit">
@@ -248,6 +253,19 @@
                   <input id="wingP" data-k="wingP" type="number" min="4" max="40" step="1" /><em>ft</em>
                 </div></label
               >
+            </div>
+            <div class="field" id="wingSideWrap">
+              <span>Wing projects from</span>
+              <div class="seg grid2" data-set="wingSide">
+                <button type="button" data-v="front">Front</button
+                ><button type="button" data-v="back">Back</button
+                ><button type="button" data-v="left">Left side</button
+                ><button type="button" data-v="right">Right side</button>
+              </div>
+            </div>
+            <div class="field" id="wingEndWrap">
+              <span id="wingEndLbl">Wing sits at</span>
+              <div class="seg" data-set="wingEnd" id="wingEndSeg"></div>
             </div>
             <div id="rowWrap" class="field" style="gap: 8px">
               <span>Units in the row</span>
@@ -571,6 +589,64 @@
           <span class="title">Assembled model</span>
           <span class="cap" id="cap3d">Drag to rotate · scroll to zoom</span>
         </div>
+        <section class="editor" id="fpEditor" hidden>
+          <div class="ed-head">
+            <h2>Footprint designer</h2>
+            <span class="fp-size" id="fpSize"></span>
+          </div>
+          <div class="ed-tools">
+            <button type="button" id="fpAdd">+ Add block</button
+            ><button type="button" id="fpDup">Duplicate block</button> <span class="ed-sp"></span
+            ><button type="button" id="fpDel">Delete block</button
+            ><button type="button" id="fpReset">Start over</button>
+          </div>
+          <div class="ed-body">
+            <div class="ed-canvas">
+              <svg
+                id="fpSvg"
+                tabindex="0"
+                role="img"
+                aria-label="Plan view of the footprint. Drag blocks to move them, drag their edges to resize."
+              ></svg>
+            </div>
+            <div class="ed-side">
+              <p class="ed-none" id="fpNone">
+                Click a block to select it. Drag it to move, or drag its edges and corners to resize. Blocks
+                snap to a 1 ft grid and to each other's edges. The front of the house is at the bottom.
+              </p>
+              <div id="fpProps" class="ed-props" hidden>
+                <div class="row">
+                  <label class="field"
+                    ><span>Width</span>
+                    <div class="unit">
+                      <input id="fpW" type="number" min="4" max="120" step="1" /><em>ft</em>
+                    </div></label
+                  >
+                  <label class="field"
+                    ><span>Depth</span>
+                    <div class="unit">
+                      <input id="fpD" type="number" min="4" max="120" step="1" /><em>ft</em>
+                    </div></label
+                  >
+                </div>
+                <div class="field">
+                  <span>Ridge runs</span>
+                  <div class="seg" id="fpRidge">
+                    <button type="button" data-v="auto">Auto</button
+                    ><button type="button" data-v="x">Left–right</button
+                    ><button type="button" data-v="z">Front–back</button>
+                  </div>
+                </div>
+                <p class="hint">Arrow keys nudge the selected block 1 ft.</p>
+              </div>
+              <p class="ed-readout fp-warn" id="fpReadout"></p>
+              <p class="hint">
+                Walls follow the outside of all the blocks together. Each block gets its own roof in the
+                chosen style, and roofs meet in valleys. The longest front wall gets the front door.
+              </p>
+            </div>
+          </div>
+        </section>
         <section class="editor" id="editor">
           <div class="ed-head">
             <h2>Window &amp; door editor</h2>

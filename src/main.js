@@ -6,10 +6,12 @@ import { initCatalog, showView } from './ui/catalog.js';
 import { initControls, syncControls } from './ui/controls.js';
 import { initDesignFile } from './ui/design-file.js';
 import { initEditor } from './ui/editor.js';
+import { initFootprint } from './ui/footprint.js';
 
 initPdf();
 initControls();
 initEditor();
+initFootprint(render);
 initDesignFile();
 initCatalog();
 

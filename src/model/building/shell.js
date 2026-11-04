@@ -4,7 +4,7 @@ import { S } from '../../config/state.js';
 import { poly } from '../../lib/draw.js';
 import { Vdot, freeIntervals, spread, subtractConvex } from '../../lib/geometry.js';
 import { clamp, cleanSign } from '../../lib/math.js';
-import { gamb, ridgeInfo, roofFaces, sawSide } from './roofs.js';
+import { gamb, roofFaces, sawSide } from './roofs.js';
 import { baseFace, loc, mkFace, tmpFrame, unloc, wallFace } from '../faces.js';
 import { buildAddons } from '../features/addons.js';
 import {
@@ -18,6 +18,8 @@ import {
 import { buildChimney, buildDormer, buildPorch } from '../features/house.js';
 import { buildTower, civicExtras } from '../features/towers.js';
 import { colorsFromS, makePal } from '../palette.js';
+import { variantOf } from '../../config/variants.js';
+import { makeWings, placeFaces, planesInFrame, wingFrame, wingOccl, wingRect } from './wings.js';
 
 export function effFoot() {
   const T = S.type;
@@ -28,6 +30,8 @@ export function effFoot() {
 
 export function effRoof() {
   const T = S.type;
+  const vr = variantOf(S.variant).roof;
+  if (vr && T !== 'house') return vr;
   if (T === 'civic') return S.civKind === 'church' ? 'gable' : S.civKind === 'station' ? 'hip' : 'flat';
   if (T === 'garden') return 'gable';
   if (T === 'industrial') return S.indKind === 'factory' ? 'saw' : 'gable';
@@ -50,7 +54,7 @@ export function baseB() {
     stories: st,
     storyH: S.storyH,
     found: S.found,
-    pitch: ind ? (S.indKind === 'storage' ? 1.5 : S.pitch) : S.pitch,
+    pitch: ind ? (S.indKind === 'storage' && !variantOf(S.variant).freePitch ? 1.5 : S.pitch) : S.pitch,
     eave: ind ? 0.6 : S.eave,
     rake: ind ? 0.4 : S.rake,
     venueKind: S.venueKind,
@@ -87,7 +91,8 @@ export function baseB() {
     cz: 0,
     partyL: false,
     partyR: false,
-    tag: ''
+    tag: '',
+    variant: S.type === 'house' || S.type === 'scenery' ? '' : S.variant || ''
   };
 }
 
@@ -309,7 +314,7 @@ export function rectWalls(M, B, occl) {
         role: r,
         side: role,
         B,
-        occl: role === 'front' ? occl : [],
+        occl: (occl && occl[role]) || [],
         key: (B.tag || 'Main') + ':' + role,
         label: (B.tag ? B.tag + ' · ' : '') + names[role] + ' wall'
       }
@@ -528,19 +533,7 @@ export function buildWing(M, B, w, planes) {
 }
 
 export function wingsFor(B) {
-  const f = effFoot();
-  if (!(f === 'L' || f === 'T' || f === 'U')) return [];
-  const xL = B.cx - B.W / 2,
-    xR = B.cx + B.W / 2;
-  let Ww = Math.min(S.wingW, B.D - 2, f === 'U' ? B.W * 0.45 : B.W - 2);
-  Ww = Math.max(6, Ww);
-  const P = S.wingP;
-  if (f === 'L') return [{ a: xR - Ww, b: xR, P }];
-  if (f === 'T') return [{ a: B.cx - Ww / 2, b: B.cx + Ww / 2, P }];
-  return [
-    { a: xL, b: xL + Ww, P },
-    { a: xR - Ww, b: xR, P }
-  ];
+  return makeWings(B, effFoot());
 }
 
 export function buildUnit(M, B) {
@@ -551,7 +544,7 @@ export function buildUnit(M, B) {
     xR = B.cx + B.W / 2,
     zF = B.cz + B.D / 2,
     zB = B.cz - B.D / 2;
-  const occl = wings.map(w => [w.a - xL, w.b - xL]);
+  const occl = wingOccl(B, wings);
   const wf = rectWalls(M, B, occl);
   M.groups.push({
     title: pre + 'Walls',
@@ -580,7 +573,13 @@ export function buildUnit(M, B) {
   });
   wings.forEach((w, i) => {
     w.idx = i;
-    const r = buildWing(M, B, w, rf.planes);
+    /* build the wing as if on the front wall, then turn it onto its side of the house */
+    const fr = wingFrame(B, w.side || 'front'),
+      i0 = M.faces.length;
+    const Bf = fr.identity ? B : Object.assign({}, B, { W: fr.W, D: fr.D });
+    const r = buildWing(M, Bf, w, planesInFrame(B, fr, rf.planes));
+    placeFaces(M, i0, fr);
+    for (let k = i0; k < M.faces.length; k++) if (M.faces[k].art.B === Bf) M.faces[k].art.B = B;
     const n = wings.length > 1 ? ` ${i + 1}` : '';
     M.groups.push({
       title: `Wing${n} walls`,
@@ -595,23 +594,26 @@ export function buildUnit(M, B) {
       M.groups.push({ title: pre + 'Canopy', faces: flatCanopy(M, B), pref: 'root', check: true });
     else M.groups.push({ title: pre + 'Awning', faces: awningFaces(M, B), pref: 'root', check: true });
   }
-  if (B.type === 'house' && B.chimney && ridgeInfo(B)) {
-    if (B.W >= 22) {
-      buildChimney(M, B, xL + 3.2, pre + 'Chimney 1');
-      buildChimney(M, B, xR - 3.2, pre + 'Chimney 2');
-    } else buildChimney(M, B, B.cx + B.W * 0.2, pre + 'Chimney');
-  }
+  if (B.type === 'house' && B.chimney) buildChimney(M, B, pre + 'Chimney');
   if (B.type === 'office' && !B.tag) penthouse(M, B);
+  let towerCorner = null;
   if (B.type === 'house' && B.tower) {
     const r = 5.5,
-      d = r * 0.72 + 0.9,
-      left = !wings.some(w => w.a <= xL + 0.1);
-    const cx = left ? xL - d : xR + d,
-      cz = zF + d;
-    const cz2 = wings.some(w => w.a <= xL + 0.1) && wings.some(w => w.b >= xR - 0.1) ? zB - d : cz;
+      d = r * 0.72 + 0.9;
+    /* first corner (front left, front right, back right, back left) not taken by a wing */
+    const corners = [
+      ['FL', xL - d, zF + d],
+      ['FR', xR + d, zF + d],
+      ['BR', xR + d, zB - d],
+      ['BL', xL - d, zB - d]
+    ];
+    const rects = wings.map(w => wingRect(B, w));
+    const hits = (x, z) => rects.some(q => x - r < q.x1 && x + r > q.x0 && z - r < q.z1 && z + r > q.z0);
+    const pick = corners.find(([, x, z]) => !hits(x, z)) || corners[0];
+    towerCorner = pick[0];
     buildTower(M, {
-      cx,
-      cz: cz2,
+      cx: pick[1],
+      cz: pick[2],
       r,
       n: 8,
       h: B.H + Math.min(B.storyH, 10),
@@ -638,24 +640,26 @@ export function buildUnit(M, B) {
       [xR + d, zF + d],
       [xR + d, zB - d],
       [xL - d, zB - d]
-    ].forEach(([cx, cz], i) =>
-      buildTower(M, {
-        cx,
-        cz,
-        r,
-        n: 8,
-        h,
-        top: S.towerTop,
-        coneH: r * 2.2,
-        pal: B.pal,
-        finish: B.finish,
-        found: B.found,
-        style: 'castle',
-        roofFinish: 'slate',
-        name: `Tower ${i + 1}`,
-        inward: [B.cx, B.cz]
-      })
-    );
+    ]
+      .slice(0, { front: 2, none: 0 }[variantOf(B.variant).towers] ?? 4)
+      .forEach(([cx, cz], i) =>
+        buildTower(M, {
+          cx,
+          cz,
+          r,
+          n: 8,
+          h,
+          top: S.towerTop,
+          coneH: r * 2.2,
+          pal: B.pal,
+          finish: B.finish,
+          found: B.found,
+          style: 'castle',
+          roofFinish: 'slate',
+          name: `Tower ${i + 1}`,
+          inward: [B.cx, B.cz]
+        })
+      );
   }
   if (B.type === 'barn' && B.silo) {
     const r = 6.5;
@@ -677,14 +681,14 @@ export function buildUnit(M, B) {
     });
   }
   if (B.type === 'house' && B.porch && B.porch !== 'none') {
-    const iv = freeIntervals(B.W, occl);
+    const iv = freeIntervals(B.W, occl.front);
     let best = iv[0];
     iv.forEach(q => {
       if (q[1] - q[0] > best[1] - best[0]) best = q;
     });
     let a = xL + best[0],
       b = xL + best[1];
-    if (B.tower && !wings.some(w => w.a <= xL + 0.1)) a = Math.max(a, xL + 1.5);
+    if (towerCorner === 'FL') a = Math.max(a, xL + 1.5);
     if (B.porch === 'center' || B.porch === 'portico') {
       const c = (a + b) / 2,
         hw = B.porch === 'portico' ? Math.min(9, (b - a) / 2) : Math.max(5, Math.min(8, (b - a) * 0.22));
@@ -698,7 +702,7 @@ export function buildUnit(M, B) {
   }
   if (B.type === 'house' && !B.tag) buildAddons(M, B);
   if (B.type === 'house' && B.dormers && (B.roof === 'gable' || (B.roof === 'hip' && B.W > B.D + 6))) {
-    const iv = freeIntervals(B.W, occl)
+    const iv = freeIntervals(B.W, occl.front)
       .map(([p, q]) => [p + 4, q - 4])
       .filter(([p, q]) => q > p);
     let xs = spread(

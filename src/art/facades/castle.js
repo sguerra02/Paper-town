@@ -1,7 +1,7 @@
 /* Castle walls and towers. */
-import { slit } from '../openings/doors.js';
+import { slit, xBrace } from '../openings/doors.js';
 import { drawOpening } from '../openings/index.js';
-import { pl, poly } from '../../lib/draw.js';
+import { pl, poly, txt } from '../../lib/draw.js';
 import { archPoly, circ, freeIntervals, lancetPoly, rectP, spread } from '../../lib/geometry.js';
 import { shade } from '../../lib/math.js';
 
@@ -91,7 +91,134 @@ export function towerArt(f, w, P) {
     it = [];
   if (A.role === 'party') return it;
   if (B.style === 'castle') {
-    for (let y = B.found + 6; y < B.H - 4; y += 10) slit(it, w / 2 - 0.3, y, 0.6, 3.2, c);
+    const y0 = A.door ? B.found + 11 : B.found + 6;
+    for (let y = y0; y < B.H - 4; y += 10) slit(it, w / 2 - 0.3, y, 0.6, 3.2, c);
+    if (A.door) {
+      const dw = Math.min(4, w - 1.6);
+      it.push(
+        poly(archPoly(w / 2 - dw / 2 - 0.5, B.found, dw + 1, 8), {
+          fill: c.L ? '#ffffff' : shade(c.wall, -0.22),
+          stroke: c.wallLine,
+          w: 0.3
+        }),
+        poly(archPoly(w / 2 - dw / 2, B.found, dw, 7.4), { fill: c.door, stroke: c.doorLine, w: 0.35 })
+      );
+    }
+  } else if (B.style === 'tank') {
+    /* seams, a catwalk band and the town name spread one letter per panel across the front */
+    it.push(
+      poly(rectP(0, 0.4, w, 0.5), {
+        fill: c.L ? '#ffffff' : shade(c.wall, -0.25),
+        stroke: c.wallLine,
+        w: 0.2
+      })
+    );
+    const hs = [];
+    for (let y = B.H / 3; y < B.H - 0.5; y += B.H / 3)
+      hs.push([
+        [0, y],
+        [w, y]
+      ]);
+    it.push({ t: 'segs', s: hs, stroke: c.wallLine, w: 0.25 });
+    const ch = (B.sign || '').replace(/ /g, '').split('');
+    if (ch.length && B.n) {
+      const L = ch.length,
+        j = (A.idx + Math.floor(L / 2)) % B.n;
+      if (j < L) {
+        const ink = c.L ? '#222222' : c.accent;
+        it.push(
+          txt(ch[j], w / 2, B.H * 0.42, {
+            sizeFt: Math.min(w * 0.8, B.H * 0.3),
+            anchor: 'middle',
+            bold: true,
+            fill: ink
+          })
+        );
+      }
+    }
+  } else if (B.style === 'bin') {
+    const hs = [];
+    for (let y = 0.6; y < B.H; y += 0.6)
+      hs.push([
+        [0, y],
+        [w, y]
+      ]);
+    it.push({ t: 'segs', s: hs, stroke: c.wallLine, w: 0.15 });
+    if (A.door) it.push(poly(rectP(w / 2 - 1, 0.4, 2, 3.2), { fill: c.door, stroke: c.doorLine, w: 0.3 }));
+    if (A.idx === 0) {
+      const ls = [];
+      for (let y = 1; y < B.H; y += 1)
+        ls.push([
+          [w / 2 - 0.5, y],
+          [w / 2 + 0.5, y]
+        ]);
+      it.push(
+        pl(
+          [
+            [w / 2 - 0.5, 0.5],
+            [w / 2 - 0.5, B.H]
+          ],
+          { stroke: c.wallLine, w: 0.3 }
+        ),
+        pl(
+          [
+            [w / 2 + 0.5, 0.5],
+            [w / 2 + 0.5, B.H]
+          ],
+          { stroke: c.wallLine, w: 0.3 }
+        ),
+        { t: 'segs', s: ls, stroke: c.wallLine, w: 0.3 }
+      );
+    }
+  } else if (B.style === 'roundbarn') {
+    const F = B.found;
+    if (A.door) {
+      const dw = Math.min(w - 0.6, 8),
+        dh = Math.min(10, B.H - F - 1.5);
+      it.push(
+        poly(rectP(w / 2 - dw / 2, F, dw, dh), { fill: c.door, stroke: c.doorLine, w: 0.35 }),
+        ...xBrace(w / 2 - dw / 2, F, dw, dh, 0.4, c)
+      );
+    } else if (A.idx % 2 === 0 && w > 3)
+      it.push(...drawOpening({ type: 'win', x: w / 2 - 1.1, y: F + 5, w: 2.2, h: 2 }, c, null));
+    if (A.idx % 4 === 1 && B.H - F > 14)
+      it.push(...drawOpening({ type: 'win', x: w / 2 - 1, y: B.H - 4.5, w: 2, h: 2.4 }, c, null));
+    it.push(poly(rectP(0, B.H - 0.6, w, 0.6), { fill: c.trim, stroke: c.trimLine, w: 0.25 }));
+  } else if (B.style === 'wizard') {
+    const F = B.found;
+    if (A.door)
+      it.push(
+        poly(lancetPoly(w / 2 - 1.6, F, 3.2, 7.4), { fill: c.trim, stroke: c.trimLine, w: 0.3 }),
+        poly(lancetPoly(w / 2 - 1.3, F, 2.6, 7), { fill: c.door, stroke: c.doorLine, w: 0.35 })
+      );
+    for (let y = F + 9 + (A.idx % 3) * 3.4; y < B.H - 4; y += 10.2)
+      it.push(
+        ...drawOpening({ type: 'win', x: w / 2 - 0.8, y, w: 1.6, h: 3 }, c, { winStyle: 'gothic', lit: true })
+      );
+    if (!c.L)
+      for (let k = 0; k < 3; k++) {
+        const x = ((A.idx * 0.37 + k * 0.29) % 1) * w,
+          y = F + ((A.idx * 0.53 + k * 0.31) % 1) * (B.H - F - 2) + 1;
+        const s = 0.35,
+          st = [];
+        for (let i = 0; i < 10; i++) {
+          const a = Math.PI / 2 + (i * Math.PI) / 5,
+            r = i % 2 ? s * 0.4 : s;
+          st.push([x + r * Math.cos(a), y + r * Math.sin(a)]);
+        }
+        it.push(poly(st, { fill: '#e9c95a' }));
+      }
+  } else if (B.style === 'drum') {
+    it.push(poly(rectP(0, 0, 0.5, B.H), { fill: c.trim, stroke: c.trimLine, w: 0.25 }));
+    if (B.H > 5)
+      it.push(
+        ...drawOpening(
+          { type: 'win', x: w / 2 - 0.8, y: B.H * 0.3, w: 1.6, h: Math.min(3.4, B.H * 0.5) },
+          c,
+          { winStyle: 'arched' }
+        )
+      );
+    it.push(poly(rectP(0, B.H - 0.6, w, 0.6), { fill: c.trim, stroke: c.trimLine, w: 0.25 }));
   } else if (B.style === 'steeple') {
     const bel = B.H - 5.5;
     if (A.door) {

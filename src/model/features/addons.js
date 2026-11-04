@@ -2,6 +2,7 @@
 import { freeIntervals } from '../../lib/geometry.js';
 import { clamp } from '../../lib/math.js';
 import { mkFace } from '../faces.js';
+import { wingOccl } from '../building/wings.js';
 
 /* decks and balconies: built in a "front frame" (wall at z0, outward +z) then mapped to the real wall */
 export const ADDON_SHEET = 'Deck & balcony';
@@ -10,26 +11,35 @@ export function addonSpans(B) {
   const xL = B.cx - B.W / 2,
     xR = B.cx + B.W / 2,
     out = {};
+  const occl = wingOccl(B, B.wings);
+  /* widest stretch of a wall not covered by a wing, in that wall's own left-to-right distance */
+  const widest = side => {
+    const iv = freeIntervals(B.W, occl[side]);
+    let best = iv[0];
+    iv.forEach(q => {
+      if (q[1] - q[0] > best[1] - best[0]) best = q;
+    });
+    return best;
+  };
   if (B.deck === 'rear') {
-    const w = clamp(B.deckW, 6, B.W - 1);
-    out.deck = { side: 'back', a: B.cx - w / 2, b: B.cx + w / 2, P: clamp(B.deckD, 4, 24) };
+    const best = widest('back'),
+      w = Math.min(clamp(B.deckW, 6, B.W - 1), best[1] - best[0] - 1),
+      c = occl.back.length ? xR - (best[0] + best[1]) / 2 : B.cx;
+    if (w >= 6) out.deck = { side: 'back', a: c - w / 2, b: c + w / 2, P: clamp(B.deckD, 4, 24) };
   }
   if (B.balcony && B.balcony !== 'none' && B.stories > 1) {
     const w = clamp(B.balcW, 5, B.W - 2);
-    let c = B.cx;
     if (B.balcony === 'front') {
-      const iv = freeIntervals(
-        B.W,
-        (B.wings || []).map(q => [q.a - xL, q.b - xL])
-      );
-      let best = iv[0];
-      iv.forEach(q => {
-        if (q[1] - q[0] > best[1] - best[0]) best = q;
-      });
-      c = xL + (best[0] + best[1]) / 2;
+      const best = widest('front'),
+        c = xL + (best[0] + best[1]) / 2;
       const half = Math.min(w / 2, (best[1] - best[0]) / 2 - 0.5);
       if (half >= 2.5) out.balc = { side: 'front', a: c - half, b: c + half, P: 4 };
-    } else out.balc = { side: 'back', a: c - w / 2, b: c + w / 2, P: 4 };
+    } else {
+      const best = widest('back'),
+        c = occl.back.length ? xR - (best[0] + best[1]) / 2 : B.cx;
+      const half = Math.min(w / 2, (best[1] - best[0]) / 2 - 0.5);
+      if (half >= 2.5) out.balc = { side: 'back', a: c - half, b: c + half, P: 4 };
+    }
   }
   /* local x (along the wall face, from its left edge) of each span, for automatic door placement */
   Object.values(out).forEach(s => {

@@ -1,4 +1,5 @@
 /* Faces are the building blocks of every model: a flat polygon in 3D with edge roles for tabs, folds and cuts. */
+import { wingCorners } from './building/wings.js';
 import { Vadd, Vcross, Vdot, Vmul, Vnorm, Vsub, newell } from '../lib/geometry.js';
 
 export function mkFace(M, pts, o) {
@@ -63,14 +64,17 @@ export function baseFace(M, B, wings) {
     xR = B.cx + B.W / 2,
     zF = B.cz + B.D / 2,
     zB = B.cz - B.D / 2;
-  let Q = [[xL, -zF]];
-  (wings || [])
-    .slice()
-    .sort((p, q) => p.a - q.a)
-    .forEach(w => {
-      Q.push([w.a, -zF], [w.a, -zF - w.P], [w.b, -zF - w.P], [w.b, -zF]);
-    });
-  Q.push([xR, -zF], [xR, -zB], [xL, -zB]);
+  /* walk the footprint front → right → back → left, stepping out around each wing on the way */
+  const corners = { front: [xL, zF], right: [xR, zF], back: [xR, zB], left: [xL, zB] };
+  const Q = [];
+  ['front', 'right', 'back', 'left'].forEach(side => {
+    Q.push(corners[side]);
+    (wings || [])
+      .filter(w => (w.side || 'front') === side)
+      .sort((p, q) => p.a - q.a)
+      .forEach(w => wingCorners(B, w).forEach(p => Q.push([p[0], p[2]])));
+  });
+  Q.forEach(p => (p[1] = -p[1]));
   const D = [];
   Q.forEach(p => {
     const l = D[D.length - 1];

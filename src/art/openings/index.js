@@ -62,7 +62,7 @@ export function houseOpenings(f) {
       });
       ivS = freeIntervals(w, [...(A.occl || []), [dc - ad.w / 2 - 1.4, dc + ad.w / 2 + 1.4]]);
     }
-    if (A.role === 'front' && s === 0) {
+    if (A.role === 'front' && s === 0 && !A.noDoor) {
       let best = iv[0];
       iv.forEach(x => {
         if (x[1] - x[0] > best[1] - best[0]) best = x;

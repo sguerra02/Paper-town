@@ -21,6 +21,7 @@ import {
 import { sceneryArt, sceneryArt2 } from './scenery/objects.js';
 import { sceneryArt3 } from './scenery/stone-and-rail.js';
 import { baseArt, deckArt, padArt, roofArt } from './textures.js';
+import { specialArt } from './specials.js';
 import { poly } from '../lib/draw.js';
 
 export const SC3 = {
@@ -119,6 +120,8 @@ export function artFor(f) {
       return postArt(f);
     case 'pump':
       return pumpArt(f);
+    case 'special':
+      return specialArt(f);
   }
   return [poly(f.l2, { fill: '#ffffff' })];
 }

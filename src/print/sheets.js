@@ -1,4 +1,5 @@
 /* Builds the drawing for each printed sheet: header, parts, labels and scale bar. */
+import { customBlocks } from '../model/building/custom.js';
 import {
   CUT,
   FOLD,
@@ -48,8 +49,17 @@ export function describe() {
     }[S.venueKind],
     industrial: S.indKind === 'factory' ? 'Factory' : 'Self storage'
   }[S.type];
+  const vp = S.variant && S.type !== 'house' && (PRESETS[S.type] || []).find(q => q.v.variant === S.variant);
+  const tName = vp ? vp.name : t;
   const f = effFoot();
-  const fp = { rect: 'rectangle', L: 'L-shape', T: 'T-shape', U: 'U-shape', row: `row of ${S.units}` }[f];
+  const fp = {
+    rect: 'rectangle',
+    L: 'L-shape',
+    T: 'T-shape',
+    U: 'U-shape',
+    row: `row of ${S.units}`,
+    custom: 'custom footprint'
+  }[f];
   const r =
     S.type === 'house' ||
     S.type === 'barn' ||
@@ -60,7 +70,14 @@ export function describe() {
       : S.type === 'castle'
         ? 'battlements'
         : 'flat roof, parapet';
-  return `${t}  ·  ${fp}  ·  ${S.width} x ${S.depth} ft  ·  ${r}  ·  ${WALL_NAMES[S.wallFinish]}`;
+  let size = `${S.width} x ${S.depth} ft`;
+  if (f === 'custom') {
+    const bl = customBlocks();
+    const w = Math.max(...bl.map(b => b.x1)) - Math.min(...bl.map(b => b.x0)),
+      d = Math.max(...bl.map(b => b.z1)) - Math.min(...bl.map(b => b.z0));
+    size = `${Math.round(w)} x ${Math.round(d)} ft overall`;
+  }
+  return `${tName}  ·  ${fp}  ·  ${size}  ·  ${r}  ·  ${WALL_NAMES[S.wallFinish]}`;
 }
 
 export function pageItems(page, idx, total, sz, den, orientName) {
