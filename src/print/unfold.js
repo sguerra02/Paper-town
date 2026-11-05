@@ -1,6 +1,6 @@
 /* Unfolds groups of faces flat into printable pieces with glue tabs and fold lines. */
 import { artFor } from '../art/index.js';
-import { CUT, FOLD, LABEL, MM, TABFILL, THICK } from '../config/constants.js';
+import { CUT, FOLD, LABEL, MM, THICK } from '../config/constants.js';
 import { S } from '../config/state.js';
 import { mapItems, pl, poly, txt } from '../lib/draw.js';
 import { inPoly, insetPoly } from '../lib/geometry.js';
@@ -185,7 +185,7 @@ export function buildPiece(M, id, title, fids, pref, k, d, art, tpFt, check) {
   });
   tabs.forEach(([a, b]) => {
     const tp = makeTab(a, b, dFt);
-    items.push(poly(tp, { fill: TABFILL, sil: true }), pl(tp, CUT));
+    items.push(poly(tp, { sil: true }), pl(tp, CUT)); // tabs are glued over, so they print no ink
     folds.push([a, b]);
   });
   folds.forEach(e => items.push(pl(e, { stroke: '#ffffff', w: 1.1 }), pl(e, FOLD)));

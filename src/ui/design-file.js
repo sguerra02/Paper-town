@@ -7,9 +7,9 @@ import { syncControls } from './controls.js';
 /** Wires up this module's event listeners. Called once from main.js. */
 export function initDesignFile() {
   $('#saveDesign').addEventListener('click', () => {
-    const data = { app: 'gable-crease', version: 1, saved: new Date().toISOString(), settings: S };
+    const data = { app: 'paper-town', version: 1, saved: new Date().toISOString(), settings: S };
     saveFile(
-      `gable-crease-${S.type}-design.json`,
+      `paper-town-${S.type}-design.json`,
       new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }),
       'Design'
     );
@@ -22,7 +22,7 @@ export function initDesignFile() {
     r.onload = () => {
       try {
         const d = JSON.parse(r.result);
-        if (!d || d.app !== 'gable-crease' || !d.settings) throw new Error('bad');
+        if (!d || (d.app !== 'paper-town' && d.app !== 'gable-crease') || !d.settings) throw new Error('bad');
         Object.assign(S, d.settings);
         S.custom = S.custom || {};
         EDIT.key = null;
@@ -30,7 +30,7 @@ export function initDesignFile() {
         render();
         status('Design opened.');
       } catch (err) {
-        status('That file is not a Gable & Crease design.');
+        status('That file is not a Paper Town design.');
       }
     };
     r.readAsText(file);

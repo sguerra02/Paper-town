@@ -1,5 +1,5 @@
 /* Splits parts that are bigger than the sheet into sections with glue strips. */
-import { CUT, LABEL, TABFILL } from '../config/constants.js';
+import { CUT, LABEL } from '../config/constants.js';
 import { mapItems, poly, txt } from '../lib/draw.js';
 import { bbox } from '../lib/geometry.js';
 import { finalize } from './unfold.js';
@@ -131,7 +131,7 @@ export function splitPiece(p, area) {
       const addZone = (z, label, vertical) => {
         const polys = sil.map(s => clipPolyRect(s.p, z)).filter(q => q.length >= 3);
         if (!polys.length) return;
-        polys.forEach(q => it.push(poly(q, { fill: TABFILL })));
+        polys.forEach(q => it.push(poly(q, { stroke: '#9a9a9a', w: 0.3, dash: [1.2, 1.2] }))); // glue strip: outline only, no ink fill
         const zb = { x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9 };
         polys.forEach(q =>
           q.forEach(pt => {

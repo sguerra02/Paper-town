@@ -1,16 +1,6 @@
 /* Builds the drawing for each printed sheet: header, parts, labels and scale bar. */
 import { customBlocks } from '../model/building/custom.js';
-import {
-  CUT,
-  FOLD,
-  HEADER,
-  MARGIN,
-  MM,
-  PAPERS,
-  ROOF_NAMES,
-  TABFILL,
-  WALL_NAMES
-} from '../config/constants.js';
+import { CUT, FOLD, HEADER, MARGIN, MM, PAPERS, ROOF_NAMES, WALL_NAMES } from '../config/constants.js';
 import { PRESETS } from '../config/presets/index.js';
 import { S } from '../config/state.js';
 import { mapItems, pl, poly, txt } from '../lib/draw.js';
@@ -85,7 +75,7 @@ export function pageItems(page, idx, total, sz, den, orientName) {
     M_ = MARGIN;
   if (idx === 0) {
     const colR = sz.w - M_ - 2.1;
-    items.push(txt('GABLE & CREASE', M_, M_ + 0.16, { size: 11, bold: true, fill: '#1b2320' }));
+    items.push(txt('PAPER TOWN', M_, M_ + 0.16, { size: 11, bold: true, fill: '#1b2320' }));
     items.push(txt(describe(), M_, M_ + 0.33, { size: 7.2, fill: '#333333' }));
     items.push(
       txt(
@@ -105,7 +95,7 @@ export function pageItems(page, idx, total, sz, den, orientName) {
     );
     items.push(
       txt(
-        'then glue the grey tabs inside. Build the walls first, add roofs and wings, then details. Set everything on the base plates.',
+        'then glue the tabs inside. Build the walls first, add roofs and wings, then details. Set everything on the base plates.',
         M_,
         M_ + 0.7,
         { size: 6, fill: '#555555' }
@@ -133,7 +123,7 @@ export function pageItems(page, idx, total, sz, den, orientName) {
       txt('Fold (crease away from you)', M_ + 1.22, ly + 0.025, { size: 6.5 })
     );
     items.push(
-      poly(rectP(M_ + 2.75, ly - 0.05, 0.3, 0.1), { fill: TABFILL, stroke: '#111111', w: 0.4 }),
+      poly(rectP(M_ + 2.75, ly - 0.05, 0.3, 0.1), { stroke: '#111111', w: 0.4 }),
       txt('Glue tab', M_ + 3.12, ly + 0.025, { size: 6.5 })
     );
     const x0 = colR + 0.05,

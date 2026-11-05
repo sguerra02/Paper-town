@@ -17,8 +17,8 @@ export async function exportPDF() {
     const { PDFDocument, rgb, StandardFonts, degrees } = PDFLib;
     const c = current;
     const doc = await PDFDocument.create();
-    doc.setTitle(`Gable & Crease ${S.width}x${S.depth} ft at 1:${c.den}`);
-    doc.setCreator('Gable & Crease');
+    doc.setTitle(`Paper Town ${S.width}x${S.depth} ft at 1:${c.den}`);
+    doc.setCreator('Paper Town');
     const font = await doc.embedFont(StandardFonts.Helvetica),
       bold = await doc.embedFont(StandardFonts.HelveticaBold);
     const col = h => {
@@ -76,7 +76,7 @@ export async function exportPDF() {
       });
     });
     const bytes = await doc.save();
-    const name = `gable-crease-${S.type}-${S.width}x${S.depth}ft-1-${c.den}-${S.paper}.pdf`;
+    const name = `paper-town-${S.type}-${S.width}x${S.depth}ft-1-${c.den}-${S.paper}.pdf`;
     await saveFile(name, new Blob([bytes], { type: 'application/pdf' }), 'PDF');
   } catch (err) {
     console.error(err);
