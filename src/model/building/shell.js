@@ -80,6 +80,7 @@ export function baseB() {
     awning: S.awning,
     roadKind: S.roadKind,
     bays: S.bays,
+    bayPct: S.bayPct ?? 58,
     shutters: S.type === 'house' && S.shutters,
     chimney: S.chimney,
     tower: S.tower,
