@@ -23,11 +23,13 @@ export function shade(h, amt) {
   );
 }
 
-export const cleanSign = s =>
+/* the longest sign a building of width w (ft) takes: about 0.6 ft of wall per letter, 18 to 60 letters */
+export const signMax = w => Math.max(18, Math.min(60, Math.floor(((+w || 0) - 1) / 0.6)));
+export const cleanSign = (s, max = 60) =>
   String(s || '')
     .toUpperCase()
     .replace(/[^A-Z0-9 &'.,!#\-]/g, '')
-    .slice(0, 18);
+    .slice(0, max);
 
 export function rng(seed) {
   let a = seed >>> 0;

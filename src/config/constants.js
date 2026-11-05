@@ -83,8 +83,6 @@ export const CUT = { stroke: '#111111', w: 0.6 };
 
 export const FOLD = { stroke: '#111111', w: 0.5, dash: [4, 1.6, 0.8, 1.6] };
 
-export const TABFILL = '#e2e2dd';
-
 export const ROWABLE = { house: 1, store: 1, office: 1, venue: 1 };
 
 export const STORY_LIM = {

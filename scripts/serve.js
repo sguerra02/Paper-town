@@ -24,6 +24,6 @@ function serve(root, port) {
 
 if (require.main === module) {
   const [root = '.', port = 5173] = process.argv.slice(2);
-  serve(root, +port).then(() => console.log(`Gable & Crease on http://localhost:${port}`));
+  serve(root, +port).then(() => console.log(`Paper Town on http://localhost:${port}`));
 }
 module.exports = { serve };

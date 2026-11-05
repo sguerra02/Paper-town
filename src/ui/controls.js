@@ -4,7 +4,7 @@ import { ROWABLE, STORY_LIM } from '../config/constants.js';
 import { PRESETS } from '../config/presets/index.js';
 import { NUM, S, applyPreset } from '../config/state.js';
 import { $ } from '../lib/dom.js';
-import { clamp, cleanSign } from '../lib/math.js';
+import { clamp, cleanSign, signMax } from '../lib/math.js';
 import { effFoot, effRoof } from '../model/building/shell.js';
 import { WING_ENDS } from '../model/building/wings.js';
 
@@ -40,6 +40,7 @@ export const SC_FIELDS = {
   car: ['c']
 };
 
+let lastChips = '';
 export function syncControls() {
   /* the "which end" buttons depend on the side the wing comes out of */
   const sideWall = S.wingSide === 'left' || S.wingSide === 'right';
@@ -165,6 +166,14 @@ export function syncControls() {
     (T === 'road' && S.roadKind === 'gas') ||
     (T === 'civic' && S.civKind === 'fire')
   );
+  /* a gas station or garage can have no bays or four; a fire station has one to three */
+  const gas = T === 'road' && S.roadKind === 'gas';
+  document.querySelectorAll('#baysWrap [data-v="0"], #baysWrap [data-v="4"]').forEach(b => (b.hidden = !gas));
+  $('#bayPctWrap').hidden = !(gas && S.bays > 0);
+  /* longer signs fit on wider buildings */
+  const sm = signMax(S.width);
+  $('#sign').maxLength = sm;
+  $('#signLbl').textContent = `Sign text (up to ${sm} letters)`;
   if (T === 'road' && S.roadKind !== 'motel') $('#storiesWrap').hidden = true;
   const SC = T === 'scenery';
   $('#sceneryWrap').hidden = !SC;
@@ -206,11 +215,13 @@ export function syncControls() {
   $('#swWinWrap').hidden = SC;
   $('#swDoorWrap').hidden = SC;
   if (SC) $('#shutterSw').hidden = true;
-  $('#presets').innerHTML = PRESETS[T].map((p, i) =>
+  /* rebuild the preset chips only when they change, so a click on a chip that blurs a text field still lands */
+  const chips = PRESETS[T].map((p, i) =>
     T === 'scenery' && p.cat !== S.scCat
       ? ''
       : `<button type="button" class="chip" data-preset="${i}" aria-pressed="${T === 'scenery' ? String(p.v.scKind === S.scKind && (p.v.streetKind === undefined || p.v.streetKind === S.streetKind) && (p.v.path === undefined || p.v.path === S.path) && (p.v.scCount === undefined || S.scKind !== 'train' || (p.v.scCount === 0) === (S.scCount === 0))) : 'false'}">${p.name}</button>`
   ).join('');
+  if (chips !== lastChips) $('#presets').innerHTML = lastChips = chips;
 }
 
 export const KIND_KEY = {
@@ -245,7 +256,7 @@ export function initControls() {
       const v = parseFloat(el.value);
       if (!isFinite(v)) return;
       S[k] = clamp(v, NUM[k][0], NUM[k][1]);
-    } else if (el.type === 'text') S[k] = cleanSign(el.value);
+    } else if (el.type === 'text') S[k] = cleanSign(el.value, signMax(S.width));
     else S[k] = el.value;
     if (el.tagName === 'SELECT' || el.type === 'checkbox') syncControls();
     clearTimeout(tmr);

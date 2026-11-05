@@ -25,6 +25,7 @@ export const S = {
   sign: 'MERCANTILE',
   roadKind: 'diner',
   bays: 2,
+  bayPct: 58,
   canopy: true,
   shutters: true,
   custom: {},
@@ -102,7 +103,8 @@ export const NUM = {
   wingP: [4, 40],
   deckW: [6, 60],
   deckD: [4, 24],
-  balcW: [5, 40]
+  balcW: [5, 40],
+  bayPct: [20, 85]
 };
 
 export function applyPreset(v) {

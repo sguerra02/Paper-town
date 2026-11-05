@@ -184,16 +184,16 @@ export function roadArt(f, w, P) {
   } else {
     it.push(stripe(H - 0.9, 0.7));
     if (A.role === 'front') {
-      const wo = w * 0.42,
+      /* the shop takes what the bays leave: each bay at least 5 ft, the shop at least 7 ft */
+      const n = Math.max(0, Math.round(B.bays || 0)),
+        bayW = n ? Math.min(w - 7, Math.max(n * 5 + 1, (w * (B.bayPct ?? 58)) / 100)) : 0,
+        wo = w - bayW,
         dx = wo / 2;
-      it.push(
-        ...paneBand(0.8, dx - 2, F + 2.6, top, c, 3.2),
-        ...paneBand(dx + 2, wo - 0.6, F + 2.6, top, c, 3.2),
-        ...glassDoor(dx - 1.7, F, 3.4, Math.min(7.2, top - F), c)
-      );
-      it.push(poly(rectP(wo - 0.4, 0, 0.8, H), { fill: c.trim, stroke: c.trimLine, w: 0.3 }));
-      const n = B.bays,
-        bw = (w - wo - 1) / n;
+      if (dx - 2 > 1.4) it.push(...paneBand(0.8, dx - 2, F + 2.6, top, c, 3.2));
+      if (wo - 0.6 - (dx + 2) > 0.6) it.push(...paneBand(dx + 2, wo - 0.6, F + 2.6, top, c, 3.2));
+      it.push(...glassDoor(dx - 1.7, F, 3.4, Math.min(7.2, top - F), c));
+      if (n) it.push(poly(rectP(wo - 0.4, 0, 0.8, H), { fill: c.trim, stroke: c.trimLine, w: 0.3 }));
+      const bw = n ? (w - wo - 1) / n : 0;
       for (let i = 0; i < n; i++) {
         const gw = Math.min(10, bw - 2),
           gh = Math.min(10, H - F - 1.8),

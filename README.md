@@ -1,4 +1,4 @@
-# Gable & Crease
+# Paper Town
 
 Configure papercraft buildings and scenery in the browser, then print them to exact scale as PDFs to cut, fold and glue.
 
