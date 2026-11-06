@@ -38,7 +38,7 @@
             <rect x="21" y="19" width="5" height="11" fill="var(--ink)" />
           </svg>
           <h1>Paper Town</h1>
-          <span class="tag">PROTOTYPE · BUILD 16</span>
+          <span class="tag">PROTOTYPE · BUILD 19</span>
         </div>
         <nav class="views" aria-label="Views">
           <button type="button" data-view="catalog" aria-pressed="true">Catalog</button
@@ -382,6 +382,19 @@
               <input id="bayPct" data-k="bayPct" type="number" min="20" max="85" step="5" /><em>%</em>
             </div></label
           >
+          <div class="field" id="garageModeWrap">
+            <span>Garage doors</span>
+            <div class="seg" data-set="garageMode">
+              <button type="button" data-v="print">Print only</button
+              ><button type="button" data-v="tilt">Tilt up</button
+              ><button type="button" data-v="roll">Roll up</button>
+            </div>
+          </div>
+          <label class="check" id="garageInsideWrap"
+            ><input type="checkbox" id="garageInside" data-k="garageInside" /> Print an inside floor and back
+            wall</label
+          >
+          <p class="hint" id="garageHint"></p>
           <label class="check" id="canopyWrap"
             ><input type="checkbox" id="canopy" data-k="canopy" /> Pump canopy, posts and pumps</label
           >
@@ -397,8 +410,16 @@
           <label class="check" id="boardedWrap"
             ><input type="checkbox" id="boarded" data-k="boarded" /> Boarded-up windows</label
           >
+          <div class="field" id="glassWrap">
+            <span>Window glass</span>
+            <div class="seg" data-set="glass">
+              <button type="button" data-v="dark">Dark</button
+              ><button type="button" data-v="clear">Clear</button
+              ><button type="button" data-v="lit">All lit</button>
+            </div>
+          </div>
           <label class="check" id="litWrap"
-            ><input type="checkbox" id="lit" data-k="lit" /> Lit windows (glowing)</label
+            ><input type="checkbox" id="lit" data-k="lit" /> Some windows lit (scattered)</label
           >
           <label class="check" id="brokenWrap"
             ><input type="checkbox" id="broken" data-k="broken" /> Broken windows (cracked glass)</label

@@ -67,7 +67,16 @@ export const SC_KINDS = {
   carRoof: 1
 };
 
-export function artFor(f) {
+/* items marked printOnly appear only on paper, previewOnly only on screen (3D view, editor, catalog) */
+export const artFor = f => artItems(f).filter(q => !q.printOnly && q.t !== 'gmark');
+export const artForPrint = f => artItems(f).filter(q => !q.previewOnly && q.t !== 'gmark');
+/* the garage doors drawn on a face (see openings/garage.js) */
+export const garageMarks = f =>
+  artItems(f)
+    .filter(q => q.t === 'gmark')
+    .map(q => q.d);
+
+function artItems(f) {
   if (SC3[f.art.kind]) return sceneryArt3(f);
   if (SC2[f.art.kind]) return sceneryArt2(f);
   if (SC_KINDS[f.art.kind]) return sceneryArt(f);

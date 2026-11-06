@@ -3,6 +3,7 @@
 import { render } from './app.js';
 import { initPdf } from './print/pdf.js';
 import { initCatalog, showView } from './ui/catalog.js';
+import { initColorPicker } from './ui/colorpicker.js';
 import { initControls, syncControls } from './ui/controls.js';
 import { initDesignFile } from './ui/design-file.js';
 import { initEditor } from './ui/editor.js';
@@ -13,6 +14,7 @@ initControls();
 initEditor();
 initFootprint(render);
 initDesignFile();
+initColorPicker();
 initCatalog();
 
 syncControls();

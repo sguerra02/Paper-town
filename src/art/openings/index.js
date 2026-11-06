@@ -1,5 +1,6 @@
 /* Places and draws windows and doors. drawOpening is the single entry point for any opening. */
 import { drawDoor, planks, stoop, strap } from './doors.js';
+import { garageFx } from './garage.js';
 import { boardsOver, fxFor, glassCells, paneFx } from './effects.js';
 import { SQUARE_SHAPES, muntins, shapeP } from './windows.js';
 import { poly } from '../../lib/draw.js';
@@ -351,6 +352,7 @@ export function drawOpening(o, c, B) {
     }
     const ov = fxFor(0, 0, 0, o.fx);
     if (ov && ov.board) it.push(...boardsOver(x, y, w, h, c));
+    garageFx(it, 1, o, c);
   } else {
     drawDoor(o, c, fxFor(0, 0, 0, o.fx), it);
     const fx = fxFor(0, 0, 0, o.fx);

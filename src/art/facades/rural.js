@@ -1,4 +1,5 @@
 /* Barns and industrial buildings. */
+import { garageFx } from '../openings/garage.js';
 import { signText } from './venues.js';
 import { glassDoor, xBrace } from '../openings/doors.js';
 import { paneBand } from '../openings/effects.js';
@@ -92,7 +93,10 @@ export function industrialArt(f, w, P) {
             fill: c.trim,
             stroke: c.trimLine,
             w: 0.3
-          }),
+          })
+        );
+        const i0 = it.length;
+        it.push(
           poly(rectP(x, F, 8, Math.min(7.5, H - F - 1.1)), { fill: c.door, stroke: c.doorLine, w: 0.3 })
         );
         const ls = [];
@@ -102,6 +106,7 @@ export function industrialArt(f, w, P) {
             [x + 8, y]
           ]);
         it.push({ t: 'segs', s: ls, stroke: c.doorLine, w: 0.2 });
+        garageFx(it, i0, { x, y: F, w: 8, h: Math.min(7.5, H - F - 1.1) }, c);
       }
     } else if (A.role === 'right') {
       it.push(

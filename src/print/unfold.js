@@ -1,5 +1,5 @@
 /* Unfolds groups of faces flat into printable pieces with glue tabs and fold lines. */
-import { artFor } from '../art/index.js';
+import { artForPrint } from '../art/index.js';
 import { CUT, FOLD, LABEL, MM, THICK } from '../config/constants.js';
 import { S } from '../config/state.js';
 import { mapItems, pl, poly, txt } from '../lib/draw.js';
@@ -160,7 +160,7 @@ export function buildPiece(M, id, title, fids, pref, k, d, art, tpFt, check) {
   nets.forEach(({ f, t, l2, net }) => {
     if (art) {
       const fa = f.art.kind === 'base' || f.art.kind === 'pad' ? Object.assign({}, f, { l2 }) : f;
-      const ai = mapItems(artFor(fa), p => applyT(t, p), (t.ang * 180) / Math.PI);
+      const ai = mapItems(artForPrint(fa), p => applyT(t, p), (t.ang * 180) / Math.PI);
       ai[0] = Object.assign({}, ai[0], { sil: true });
       items.push(...ai);
     } else items.push(poly(net, { sil: true }));

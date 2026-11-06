@@ -1,6 +1,7 @@
 /* Artwork for the loose parts of catalog variants (art kind 'special'): posts, boards, cupolas, the
    drive-in screen, the motte's grass, the windmill's lattice, wheel and tail. */
-import { pl, poly } from '../lib/draw.js';
+import { CUT } from '../config/constants.js';
+import { pl, poly, txt } from '../lib/draw.js';
 import { bbox, circ, clipAll, rectP } from '../lib/geometry.js';
 import { shade } from '../lib/math.js';
 
@@ -12,6 +13,8 @@ export function specialArt(f) {
     w = bb.x1 - bb.x0,
     h = bb.y1 - bb.y0,
     it = [];
+  /* garage door parts start with their bare outline (no ink), which the print layout needs first */
+  if (/^g[A-Z]/.test(A.sub)) it.push(poly(P));
   switch (A.sub) {
     case 'plank': {
       it.push(poly(P, { fill: c.L ? '#ffffff' : '#8a6a48', stroke: c.L ? '#222222' : '#4a3a2a', w: 0.25 }));
@@ -199,9 +202,95 @@ export function specialArt(f) {
       );
       return it;
     }
+    /* working garage door parts: the door strip, the roller, tracks, brackets, inside floor and wall */
+    case 'gStrip': {
+      /* the bottom of the strip is the door; the top part (above) is wound on the roller, so no ink */
+      const dh = h - A.above;
+      it.push(
+        poly(rectP(bb.x0, bb.y0, w, dh), { fill: c.L ? '#ffffff' : c.door, stroke: c.doorLine, w: 0.3 })
+      );
+      const ls = [];
+      for (let y = bb.y0 + 0.35; y < bb.y0 + dh - 0.05; y += 0.35)
+        ls.push([
+          [bb.x0, y],
+          [bb.x1, y]
+        ]);
+      it.push({ t: 'segs', s: ls, stroke: c.doorLine, w: 0.2 });
+      it.push(
+        poly(rectP(bb.x0, bb.y0, w, 0.4), {
+          fill: c.L ? '#ffffff' : shade(c.door, -0.25),
+          stroke: c.doorLine,
+          w: 0.25
+        })
+      );
+      it.push(note('Glue this end to the roller', bb.x0 + w / 2, bb.y1 - A.above / 2, w));
+      it.push(
+        pl(
+          [
+            [bb.x0, bb.y1 - A.above],
+            [bb.x1, bb.y1 - A.above]
+          ],
+          { stroke: '#9a9a9a', w: 0.3, dash: [1.2, 1.2] }
+        )
+      );
+      return it;
+    }
+    case 'gRoller':
+      it.push(note('Roll tightly into a tube and glue the end down', bb.x0 + w / 2, bb.y0 + h * 0.55, w));
+      it.push(
+        pl(
+          [
+            [bb.x0, bb.y1 - 0.8],
+            [bb.x1, bb.y1 - 0.8]
+          ],
+          { stroke: '#9a9a9a', w: 0.3, dash: [1.2, 1.2] }
+        )
+      );
+      it.push(note('glue', bb.x0 + w / 2, bb.y1 - 0.55, w));
+      return it;
+    case 'gGlue':
+      it.push(note('glue', bb.x0 + w / 2, bb.y0 + h / 2, h, true));
+      return it;
+    case 'gPlain':
+      return it;
+    case 'gHole': {
+      const r = Math.min(w, h) * 0.32;
+      it.push(
+        pl(
+          [...circ(bb.x0 + w / 2, bb.y0 + h * 0.55, r, 20), circ(bb.x0 + w / 2, bb.y0 + h * 0.55, r, 20)[0]],
+          CUT
+        )
+      );
+      return it;
+    }
+    case 'gFloor':
+      it.push(
+        poly(P, { fill: c.L ? '#ffffff' : c.concrete || '#d9d6cf', stroke: c.L ? '#9a9a9a' : null, w: 0.2 })
+      );
+      it.push(note('Inside floor: glue on the base inside the walls', bb.x0 + w / 2, bb.y0 + h / 2, w));
+      return it;
+    case 'gLiner':
+      it.push(
+        poly(P, { fill: c.L ? '#ffffff' : shade(c.wall, 0.15), stroke: c.L ? '#9a9a9a' : null, w: 0.2 })
+      );
+      it.push(
+        note('Inside wall: glue to the inside of the wall facing the door', bb.x0 + w / 2, bb.y0 + h / 2, w)
+      );
+      return it;
     case 'vane':
       it.push(poly(P, { fill: c.L ? '#ffffff' : c.accent, stroke: c.L ? '#222222' : c.accentLine, w: 0.3 }));
       return it;
   }
   return [poly(P, { fill: '#ffffff', stroke: '#222222', w: 0.25 })];
+}
+
+/* a small gray assembly note that fits its part (sideways along a tall, narrow part) */
+function note(s, x, y, w, vertical) {
+  const size = Math.max(0.25, Math.min(0.7, (w * 0.9) / (s.length * 0.55)));
+  return txt(s, x, y - size * 0.35, {
+    sizeFt: size,
+    anchor: 'middle',
+    fill: '#8a8a8a',
+    ang: vertical ? 90 : 0
+  });
 }

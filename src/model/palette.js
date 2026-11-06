@@ -14,8 +14,16 @@ export function colorsFromS() {
   };
 }
 
+/* window glass: dark (tinted), clear (light blue) or lit (glowing yellow) — fill and edge line */
+export const GLASS = {
+  dark: ['#2e3c44', '#1a2327'],
+  clear: ['#d4e6ee', '#7f98a3'],
+  lit: ['#e9b949', '#9a7420']
+};
+
 export function makePal(c) {
   const L = S.mode === 'line',
+    gl = GLASS[S.glass] || GLASS.dark,
     g = '#9a9a9a',
     k = '#222222',
     w = '#ffffff';
@@ -27,8 +35,8 @@ export function makePal(c) {
     trimLine: L ? k : shade(c.trim, -0.4),
     window: L ? w : c.window,
     windowLine: L ? k : shade(c.window, -0.45),
-    glass: L ? w : '#2e3c44',
-    glassLine: L ? k : '#1a2327',
+    glass: L ? w : gl[0],
+    glassLine: L ? k : gl[1],
     roof: L ? w : c.roof,
     roofLine: L ? g : shade(c.roof, -0.38),
     ridge: L ? w : shade(c.roof, -0.18),
