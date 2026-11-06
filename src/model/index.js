@@ -57,6 +57,11 @@ export function buildModel() {
     if (B.type === 'civic' && B.civKind === 'church') rotateFaces(M, i0);
     if (S.type === 'road' && S.roadKind === 'gas' && S.canopy) buildCanopy(M, B);
   }
+  return indexModel(M);
+}
+
+/** Indexes shared edges and measures the model. Called again when parts are added later. */
+export function indexModel(M) {
   // edge index (auto edges only)
   const map = new Map();
   const key = (a, b) =>

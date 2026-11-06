@@ -5,7 +5,8 @@ import { $, esc } from './lib/dom.js';
 import { svgItems } from './lib/draw.js';
 import { f3 } from './lib/math.js';
 import { effFoot, effRoof } from './model/building/shell.js';
-import { buildModel } from './model/index.js';
+import { addGarageParts } from './model/garage-parts.js';
+import { buildModel, indexModel } from './model/index.js';
 import { areaFor, pack, paperSize, resolveDen } from './print/layout.js';
 import { pageItems } from './print/sheets.js';
 import { splitPiece } from './print/split.js';
@@ -19,6 +20,7 @@ export let current = null,
 
 export function compute() {
   const M = buildModel();
+  if (addGarageParts(M)) indexModel(M);
   MODEL = M;
   const den = resolveDen(M);
   const orients = S.orient === 'auto' ? ['portrait', 'landscape'] : [S.orient];
@@ -97,6 +99,15 @@ export function render() {
     <div><b>Height</b><span>${inch(fh)} in</span><small>${mm(fh)} mm</small></div>
     <div><b>Sheets</b><span>${c.pages.length} × ${PAPERS[S.paper].name}</span><small>${c.or}</small></div>
     <div><b>Parts</b><span>${c.pieces.length}</span><small>${c.pieces.map(p => p.id).join(' ')}</small></div>`;
+  /* the garage door setting shows only when this building has garage doors */
+  const hasGar = !!(c.M.garages && c.M.garages.length);
+  $('#garageModeWrap').hidden = !hasGar;
+  $('#garageInsideWrap').hidden = !hasGar || S.garageMode === 'print';
+  $('#garageHint').hidden = !hasGar || S.garageMode === 'print';
+  $('#garageHint').textContent =
+    S.garageMode === 'tilt'
+      ? 'Cut each door on its sides and bottom and score along the top, so it swings up into the building.'
+      : 'Cut out each door opening. Roll the roller strip into a tight tube and slide it through the holes in the two brackets, glued inside above the door. Glue the top of the door strip to the roller, then fold the two tracks and glue them inside beside the opening so the strip runs in them.';
   $('#warns').innerHTML = c.warns.map(w => `<div class="warn">${esc(w)}</div>`).join('');
   schedule3D();
   refreshEditor();

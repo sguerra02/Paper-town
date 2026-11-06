@@ -1,4 +1,5 @@
 /* Civic buildings and backyard structures. */
+import { garageFx } from '../openings/garage.js';
 import { signText } from './venues.js';
 import { board, glassDoor, xBrace } from '../openings/doors.js';
 import { drawOpening } from '../openings/index.js';
@@ -46,10 +47,9 @@ export function civicArt(f, w, P) {
         const x = x0 + i * bw + 0.7,
           dw = bw - 1.4,
           dh = Math.min(12, B.storyH - 1.2);
-        it.push(
-          poly(rectP(x - 0.4, F, dw + 0.8, dh + 0.5), { fill: c.trim, stroke: c.trimLine, w: 0.3 }),
-          poly(rectP(x, F, dw, dh), { fill: c.door, stroke: c.doorLine, w: 0.35 })
-        );
+        it.push(poly(rectP(x - 0.4, F, dw + 0.8, dh + 0.5), { fill: c.trim, stroke: c.trimLine, w: 0.3 }));
+        const i0 = it.length;
+        it.push(poly(rectP(x, F, dw, dh), { fill: c.door, stroke: c.doorLine, w: 0.35 }));
         const ls = [];
         for (let k = 1; k < 5; k++)
           ls.push([
@@ -69,6 +69,7 @@ export function civicArt(f, w, P) {
               { fill: c.glass, stroke: c.glassLine, w: 0.2 }
             )
           );
+        garageFx(it, i0, { x, y: F, w: dw, h: dh }, c);
       }
       it.push(...drawOpening({ type: 'door', x: Math.max(1, x0 / 2 - 1.6), y: F, w: 3.2, h: 7 }, c, null));
       it.push(

@@ -1,4 +1,5 @@
 /* Storefronts, roadside businesses, offices, hotels and motels. */
+import { garageFx } from '../openings/garage.js';
 import { signText } from './venues.js';
 import { glassDoor } from '../openings/doors.js';
 import { paneBand } from '../openings/effects.js';
@@ -198,10 +199,9 @@ export function roadArt(f, w, P) {
         const gw = Math.min(10, bw - 2),
           gh = Math.min(10, H - F - 1.8),
           gx = wo + 0.5 + bw * i + (bw - gw) / 2;
-        it.push(
-          poly(rectP(gx - 0.3, F, gw + 0.6, gh + 0.3), { fill: c.trim, stroke: c.trimLine, w: 0.3 }),
-          poly(rectP(gx, F, gw, gh), { fill: c.door, stroke: c.doorLine, w: 0.35 })
-        );
+        it.push(poly(rectP(gx - 0.3, F, gw + 0.6, gh + 0.3), { fill: c.trim, stroke: c.trimLine, w: 0.3 }));
+        const i0 = it.length;
+        it.push(poly(rectP(gx, F, gw, gh), { fill: c.door, stroke: c.doorLine, w: 0.35 }));
         const ls = [];
         for (let y = F + gh / 5; y < F + gh - 0.1; y += gh / 5)
           ls.push([
@@ -219,6 +219,7 @@ export function roadArt(f, w, P) {
               w: 0.25
             })
           );
+        garageFx(it, i0, { x: gx, y: F, w: gw, h: gh }, c);
       }
       it.push(
         poly(rectP(0, H + 0.3, w, B.Hf - H - 0.7), { fill: c.accent, stroke: c.accentLine, w: 0.35 }),
